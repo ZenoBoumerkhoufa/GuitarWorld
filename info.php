@@ -125,7 +125,7 @@ http://www.templatemo.com/tm-509-hydro
                     </button>
 
                     <!-- lOGO TEXT HERE -->
-                    <a href="index.html" class="navbar-brand">GuitarWorld</a>
+                    <a href="homepage.php" class="navbar-brand">GuitarWorld</a><img src="images/LOGO.png">
                </div>
 
                <!-- MENU LINKS -->

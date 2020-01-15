@@ -281,7 +281,7 @@ http://www.templatemo.com/tm-509-hydro
                     </button>
 
                     <!-- lOGO TEXT HERE -->
-                    <a href="index.html" class="navbar-brand">GuitarWorld</a>
+                    <a href="homepage.php" class="navbar-brand">GuitarWorld</a><img src="images/LOGO.png">
                </div>
 
                <!-- MENU LINKS -->
@@ -292,9 +292,23 @@ http://www.templatemo.com/tm-509-hydro
                          <li><a href="homepage.php#contact" class="smoothScroll">Contact</a></li>
                     </ul>
 
+                     <!-- IN OF UITLOGGEN -->
+                   <?php
+                        if(isset($_SESSION['ingelogged']) && $_SESSION['ingelogged'] == 1) { ?>
+
                     <ul class="nav navbar-nav navbar-right">
-                         <li class="section-btn"><a href="homepage.php" <?php session_destroy(); ?> >Uitloggen</a></li>
+                         <li class="section-btn"><a href="homepage.php"  >Uitloggen</a></li>
                     </ul>
+
+                    <?php session_destroy(); }
+                         else{ ?>
+
+                        <ul class="nav navbar-nav navbar-right">
+                         <li class="section-btn"><a href="#" data-toggle="modal" data-target="#modal-form">Inloggen</a></li>
+                    </ul>
+
+
+                        <?php } ?>
                </div>
 
           </div>
@@ -317,7 +331,14 @@ http://www.templatemo.com/tm-509-hydro
 
 
      <!-- PRODUCTEN -->
-    
+     <section id="blog-detail" data-stellar-background-ratio="0.5">
+          <div class="container">
+               <div class="row">
+                    <div class="col-md-offset-1 col-md-10 col-sm-12">
+                        <div class="col-md-3 col-sm-6">
+                                 
+                                 
+                                 
    <!-- PRINTEN -->
     <?php
     $mysqli= new MySQLi ("localhost","root","","guitarworld");
@@ -325,16 +346,19 @@ if(mysqli_connect_errno()) {
     trigger_error('Fout bij verbinding: '.$mysqli->error); 
 }
     else{
-        $sql = "SELECT * FROM tblProducten";
+        $sql = "SELECT ProductNaam, ProductPrijs, ProductFoto FROM tblProducten";
         if($stmt = $mysqli->prepare($sql)){
             if(!$stmt->execute()){
             echo 'Het uitvoeren van de query is mislukt: '.$stmt->error.' in query: '.$sql;
             }
         else{
             // AFWERKEN
-            $stmt->bind_result();
+            $stmt->bind_result($naam, $prijs, $foto);
             while($stmt->fetch()){
-                echo "de gitaren";
+                echo "<div>
+                         <img src='images/producten/gitaren/ESP_E_LTD_BLK.png' alt='gitaar1'>
+                          <div>'".$naam."'<br>".$prijs."</div>
+                    </div>";
                 }
             }
         
@@ -345,62 +369,12 @@ if(mysqli_connect_errno()) {
         }
     }
 ?>
-    
-    
-    <section id="blog-detail" data-stellar-background-ratio="0.5">
-          <div class="container">
-               <div class="row">
-
-                    <div class="col-md-offset-1 col-md-10 col-sm-12">
-                        <div class="section-title">
-                            
                         </div>
-                        <p>
-                             <div class="col-md-3 col-sm-6">
-                         <!-- WORK THUMB -->
-                         <div class="work-thumb">
-                              <a href="<!-- product -->">
-                                   <img src="" class="img-responsive" alt="gitaar1">
-                                  <div>gitaar 1</div>
-                              </a>
-                         </div>
                     </div>
-
-                    <div class="col-md-3 col-sm-6">
-                         <!-- WORK THUMB -->
-                         <div class="work-thumb">
-                              <a href="<!-- product -->">
-                                   <img src="" class="img-responsive" alt="gitaar2">
-                                  <div>gitaar 2</div>
-                              </a>
-                         </div>
-                    </div>
-
-                    <div class="col-md-3 col-sm-6">
-                         <!-- WORK THUMB -->
-                         <div class="work-thumb">
-                              <a href="<!--product-->">
-                                   <img src="" class="img-responsive" alt="gitaar3">
-                                  <div>gitaar 3</div>
-                              </a>
-                         </div>
-                    </div>
-
-                    <div class="col-md-3 col-sm-6">
-                         <!-- WORK THUMB -->
-                         <div class="work-thumb">
-                              <a href="<!--product-->">
-                                   <img src="" class="img-responsive" alt="gitaar4">
-                                  <div>gitaar 4</div>
-                              </a>
-                         </div>
-                    </div> 
-                    </div>
-                   </div>
-              </div>
+               </div>
+          </div>
     </section>
-    
-    
+
 
      <!-- FOOTER -->
      <footer data-stellar-background-ratio="0.5">

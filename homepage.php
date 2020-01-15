@@ -306,7 +306,7 @@ session_start();
                     </button>
 
                     <!-- LOGO TEXT -->
-                   <a href="index.html" class="navbar-brand"> GuitarWorld</a><img src="images/LOGO.png">
+                   <a href="homepage.php" class="navbar-brand"> GuitarWorld</a><img src="images/LOGO.png">
                </div>
 
                <!-- MENU LINKS -->
@@ -398,7 +398,7 @@ session_start();
                          <!-- WORK THUMB -->
                          <div class="work-thumb">
                               <a href="<!-- GITARENPAGINA -->">
-                                   <img src="images/G_Les_Paul.jpg" class="img-responsive" alt="gitaren">
+                                   <img src="images/L_P.jpg" class="img-responsive" alt="gitaren">
 
                                    <div class="work-info">
                                         <h3>Gitaren</h3>

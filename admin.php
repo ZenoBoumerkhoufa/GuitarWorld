@@ -88,7 +88,7 @@ http://www.templatemo.com/tm-509-hydro
                     </button>
 
                     <!-- lOGO TEXT HERE -->
-                    <a href="index.html" class="navbar-brand">GuitarWorld</a>
+                    <a href="homepage.php" class="navbar-brand">GuitarWorld</a><img src="images/LOGO.png">
                </div>
 
                <!-- MENU LINKS -->
@@ -130,12 +130,12 @@ http://www.templatemo.com/tm-509-hydro
 
                     <div class="col-md-offset-1 col-md-10 col-sm-12">
                         <div class="section-title">
-                            <h2>Zoeken en wijzigen</h2>
+                            <h2>Klanten zoeken en wijzigen</h2>
                             <span class="line-bar">...</span>
                         </div>
                         
 
-<!-- FORM -->
+<!-- FORM KLANTEN -->
  <form id="form1" name="form1" method="post" action="<?php echo $_SERVER['PHP_SELF']; ?> " >
  <p>Zoeken en wijzigen van klanten en hun gegevens.</p>
      <table>
@@ -301,44 +301,90 @@ GSM:
                     }
                 }
                 //de andere zoekfuncties
+        }                  
+                        
+?>
+                   </div>
+                   <br><br><br><br>
+                   <div class="col-md-offset-1 col-md-10 col-sm-12">
+                        <div class="section-title">
+                            <h2>Producten zoeken en wijzigen</h2>
+                            <span class="line-bar">...</span>
+                        </div>
+<form id="form1" name="form1" method="post" action="<?php echo $_SERVER['PHP_SELF']; ?> " >
+    <p>Zoeken en wijzigen van Producten en hun gegevens.</p>
+                           <table>
+            <tr><td>
+    ProductId:
+                </td><td>
+    <input type="text" name="id" id="id" placeholder="ProductId">
+                </td></tr>
+            <tr><td>
+                Naam:
+                </td><td>
+    <input type="text" name="naam" id="naam" placeholder="naam" />
+                </td></tr>
+                <tr><td>
+    <input type="submit" name="verzenden" id="verzenden" value="Zoeken" />
+                    </td><td>
+    <input type="reset" name="wissen" id="wissen" value="wissen" />
+                    </td></tr>
+        </table>
+                       
+</form>
+<?php
+        if(isset($_POST["verzenden"])){
+            if(isset($_POST["id"]) && $_POST["id"] != ""){
+                $id = $_POST["id"];
+                $mysqli = new MYSQLi ("localhost","root","","guitarworld");
+                if(mysqli_connect_errno()){
+                    trigger_error('Fout bij de verbinding: '.$mysqli->error);
+                }
+                else{
+                    $sql = 'select ProductId, ProductNaam, ProductOmschrijving, ProductPrijs from tblProducten where ProductId ='.$id;
+                    if($stmt = $mysqli->prepare($sql)){
+                        if(!$stmt->execute()){
+                            echo 'Het uitvoeren van de query is mislukt: '.$stmt->error.' in query: '.$sql;
+                        }
+                        else{
+                            $stmt->bind_result($productnr, $productnaam, $productomschrijving, $productprijs);
+                            while($stmt->fetch()){
+                                echo "<table><tr><td> ProductId: ".$productnr.'</td></tr><tr><td>Naam: '.$productnaam.'</td></tr><tr><td>Omschrijving: '.$productomschrijving.'</td></tr><tr><td>Prijs: '.$productprijs.'</td></tr></table>';
+                            }
+                        }
+                        $stmt->close();
+                    }
+                    else{
+                        echo 'Er zit een fout in de query: '.$mysqli->error;
+                    }
+                }                
+            }
+            else if(isset($_POST["naam"]) && $_POST["naam"] != ""){
+                $naam = $_POST["naam"];
+                $mysqli = new MYSQLi ("localhost","root","","guitarworld");
+                if(mysqli_connect_errno()){
+                    trigger_error('Fout bij de verbinding: '.$mysqli->error);
+                }
+                else{
+                    $sql = "select ProductId, ProductNaam, ProductOmschrijving, ProductPrijs from tblProducten where ProductId ='".$naam."'";
+                    if($stmt = $mysqli->prepare($sql)){
+                        if(!$stmt->execute()){
+                            echo 'Het uitvoeren van de query is mislukt: '.$stmt->error.' in query: '.$sql;
+                        }
+                        else{
+                            $stmt->bind_result($productnr, $productnaam, $productomschrijving, $productprijs);
+                            while($stmt->fetch()){
+                                echo "<table><tr><td> ProductId: ".$productnr.'</td></tr><tr><td>Naam: '.$productnaam.'</td></tr><tr><td>Omschrijving: '.$productomschrijving.'</td></tr><tr><td>Prijs: '.$productprijs.'</td></tr></table>';
+                            }
+                        }
+                        $stmt->close();
+                    }
+                    else{
+                        echo 'Er zit een fout in de query: '.$mysqli->error;
+                    }
+                }
+            }
         }
-                        
-                        
-                        
-                        
-                        
-                        
-                        
-                        
-                
-                        
-        
-//$mysqli= new MySQLi ("localhost","root","","guitarworld");
-//if(mysqli_connect_errno()) {
-//    trigger_error('Fout bij verbinding: '.$mysqli->error); 
-//}
-//else {
-//    $sql= "select * from tblKlanten ";
-//    if($stmt = $mysqli->prepare($sql)){       
-//        
-//        if(!$stmt->execute()){
-//            echo 'Het uitvoeren van de query is mislukt: '.$stmt->error.' in query: '.$sql;
-//            }
-//        else{
-//            $stmt->bind_result($klantnr, $klantnaam, $klantfamilienaam, $klantemail, $klantgsm, $klantpaswoord);
-//            while($stmt->fetch()){
-//                echo $klantnr.'-'.$klantnaam.'-'.$klantfamilienaam.'-'.$klantemail.'-'.$klantgsm.'-'.$klantpaswoord.'<br>';
-//                }
-//            }
-//        
-//        $stmt->close();
-//        }
-//    else{
-//        echo 'Er zit een fout in de query: '.$mysqli->error;
-//        }
-//    }
-                        
-                        
 ?>
                    </div>
               </div>
