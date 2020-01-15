@@ -325,7 +325,7 @@ if(mysqli_connect_errno()) {
     trigger_error('Fout bij verbinding: '.$mysqli->error); 
 }
     else{
-        $sql = "SELECT * FROM tblproducten";
+        $sql = "SELECT * FROM tblProducten";
         if($stmt = $mysqli->prepare($sql)){
             if(!$stmt->execute()){
             echo 'Het uitvoeren van de query is mislukt: '.$stmt->error.' in query: '.$sql;

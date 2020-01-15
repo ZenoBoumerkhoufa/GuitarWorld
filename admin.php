@@ -164,11 +164,6 @@ GSM:
              </td><td>
  <input type="text" name="gsm" id="gsm" placeholder="gsm" />
              </td></tr>
-         <tr><td>
-Paswoord:
-             </td><td>
- <input type="text" name="paswoord" id="paswoord" placeholder="paswoord" />
-             </td></tr>
              <tr><td>
  <input type="submit" name="verzenden" id="verzenden" value="Zoeken" />
              </td><td>
@@ -193,9 +188,9 @@ Paswoord:
                             echo 'Het uitvoeren van de query is mislukt: '.$stmt->error.' in query: '.$sql;
                         }
                         else{
-                            $stmt->bind_result($klantnr, $klantnaam, $klantfamilienaam, $klantemail, $klantgsm, $klantpaswoord);
+                            $stmt->bind_result($klantnr, $klantnaam, $klantfamilienaam, $klantemail, $klantgsm, $klantpaswoord, $postid);
                             while($stmt->fetch()){
-                                echo $klantnr.'-'.$klantnaam.'-'.$klantfamilienaam.'-'.$klantemail.'-'.$klantgsm.'-'.$klantpaswoord.'<br>';
+                                echo $klantnr.'-'.$klantnaam.'-'.$klantfamilienaam.'-'.$klantemail.'-'.$klantgsm.'-'.$klantpaswoord.'-'.$postid.'<br>';
                             }
                         }
                         $stmt->close();
@@ -212,15 +207,15 @@ Paswoord:
                         trigger_error('Fout bij de verbinding: '.$mysqli->error);
                     }
                     else{
-                        $sql = 'select * from tblKlanten where KlantNaam ='.$naam;
+                        $sql = "select * from tblKlanten where KlantNaam = '".$naam."'";
                         if($stmt = $mysqli->prepare($sql)){
                             if(!$stmt->execute()){
                                 echo 'Het uitvoeren van de query is mislukt: '.$stmt->error.' in query: '.$sql;
                             }
                             else{
-                                $stmt->bind_result($klantnr, $klantnaam, $klantfamilienaam, $klantemail, $klantgsm, $klantpaswoord);
+                                $stmt->bind_result($klantnr, $klantnaam, $klantfamilienaam, $klantemail, $klantgsm, $klantpaswoord, $postid);
                                 while($stmt->fetch()){
-                                    echo $klantnr.'-'.$klantnaam.'-'.$klantfamilienaam.'-'.$klantemail.'-'.$klantgsm.'-'.$klantpaswoord.'<br>';
+                                    echo $klantnr.'-'.$klantnaam.'-'.$klantfamilienaam.'-'.$klantemail.'-'.$klantgsm.'-'.$klantpaswoord.'-'.$postid.'<br>';
                                 }
                             }
                             $stmt->close();
@@ -237,15 +232,15 @@ Paswoord:
                         trigger_error('Fout bij de verbinding: '.$mysqli->error);
                     }
                     else{
-                        $sql = 'select * from tblKlanten where KlantFamilienaam ='.$familienaam;
+                        $sql = "select * from tblKlanten where KlantFamilienaam = '".$familienaam."'";
                         if($stmt = $mysqli->prepare($sql)){
                             if(!$stmt->execute()){
                                 echo 'Het uitvoeren van de query is mislukt: '.$stmt->error.' in query: '.$sql;
                             }
                             else{
-                                $stmt->bind_result($klantnr, $klantnaam, $klantfamilienaam, $klantemail, $klantgsm, $klantpaswoord);
+                                $stmt->bind_result($klantnr, $klantnaam, $klantfamilienaam, $klantemail, $klantgsm, $klantpaswoord, $postid);
                                 while($stmt->fetch()){
-                                    echo $klantnr.'-'.$klantnaam.'-'.$klantfamilienaam.'-'.$klantemail.'-'.$klantgsm.'-'.$klantpaswoord.'<br>';
+                                    echo $klantnr.'-'.$klantnaam.'-'.$klantfamilienaam.'-'.$klantemail.'-'.$klantgsm.'-'.$klantpaswoord.'-'.$postid.'<br>';
                                 }
                             }
                             $stmt->close();
@@ -262,15 +257,40 @@ Paswoord:
                         trigger_error('Fout bij de verbinding: '.$mysqli->error);
                     }
                     else{
-                        $sql = 'select * from tblKlanten where KlantEmail ='.$mail;
+                        $sql = "select * from tblKlanten where KlantEmail ='".$mail."'";
                         if($stmt = $mysqli->prepare($sql)){
                             if(!$stmt->execute()){
                                 echo 'Het uitvoeren van de query is mislukt: '.$stmt->error.' in query: '.$sql;
                             }
                             else{
-                                $stmt->bind_result($klantnr, $klantnaam, $klantfamilienaam, $klantemail, $klantgsm, $klantpaswoord);
+                                $stmt->bind_result($klantnr, $klantnaam, $klantfamilienaam, $klantemail, $klantgsm, $klantpaswoord, $postid);
                                 while($stmt->fetch()){
-                                    echo $klantnr.'-'.$klantnaam.'-'.$klantfamilienaam.'-'.$klantemail.'-'.$klantgsm.'-'.$klantpaswoord.'<br>';
+                                    echo $klantnr.'-'.$klantnaam.'-'.$klantfamilienaam.'-'.$klantemail.'-'.$klantgsm.'-'.$klantpaswoord.'-'.$postid.'<br>';
+                                }
+                            }
+                            $stmt->close();
+                        }
+                        else{
+                            echo 'Er zit een fout in de query: '.$mysqli->error;
+                        }
+                    }
+                }
+            else if(isset($_POST["gsm"]) && $_POST["gsm"] != ""){
+                    $gsm = $_POST["gsm"];
+                    $mysqli = new MYSQLi ("localhost","root","","guitarworld");
+                    if(mysqli_connect_errno()){
+                        trigger_error('Fout bij de verbinding: '.$mysqli->error);
+                    }
+                    else{
+                        $sql = "select * from tblKlanten where KlantGSM ='".$gsm."'";
+                        if($stmt = $mysqli->prepare($sql)){
+                            if(!$stmt->execute()){
+                                echo 'Het uitvoeren van de query is mislukt: '.$stmt->error.' in query: '.$sql;
+                            }
+                            else{
+                                $stmt->bind_result($klantnr, $klantnaam, $klantfamilienaam, $klantemail, $klantgsm, $klantpaswoord, $postid);
+                                while($stmt->fetch()){
+                                    echo $klantnr.'-'.$klantnaam.'-'.$klantfamilienaam.'-'.$klantemail.'-'.$klantgsm.'-'.$klantpaswoord.'-'.$postid.'<br>';
                                 }
                             }
                             $stmt->close();
@@ -319,7 +339,7 @@ Paswoord:
 //    }
                         
                         
-?>                        
+?>
                    </div>
               </div>
         </div>

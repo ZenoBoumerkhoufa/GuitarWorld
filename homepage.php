@@ -131,6 +131,7 @@ session_start();
 
     <!-- KLANT AANMAKEN -->
     <?php
+
     if ( (isset($_POST["naam"])) && (@$_POST["naam"] != "")){
 
         $mail = $_POST["email"];
@@ -141,7 +142,31 @@ session_start();
             trigger_error('Fout bij verbinding: '.$mysqli->error);
         }
         else{
-
+            
+            $sqlp = "SELECT PostcodeId FROM tblgemeente";
+            if(isset($_POST["gemeente"]) && $_POST["gemeente"] != ""){
+                $sqlp = $sqlp." WHERE Gemeente = '".$_POST["gemeente"]."'";
+            }
+            if(isset($_POST["postcode"]) && $_POST["postcode"] != ""){
+                $sqlp = $sqlp." AND PCode = '".$_POST["postcode"]."'";
+            }
+            if($stmt = $mysqli->prepare($sqlp)){
+                if(!$stmt->execute()){
+                    echo "Het uitvoeren van de query is mislukt: ".$stmt->error." in query: ".$sql2;
+                }
+                else{
+                    $stmt->bind_result($postcodeid);
+                    while($stmt->fetch()){
+                        echo "hallo";
+                    }
+                    
+                }
+                                
+            }
+            else{
+                echo "er zit een fout in de query";
+            }
+                
             $sql = 'SELECT count(*) as aantal FROM tblKlanten where KlantEmail=? ';
 
 
@@ -160,15 +185,17 @@ session_start();
 
                     if ($aantal ==0){
 
-                       $sql2 = " INSERT INTO tblKlanten (KlantNaam, KlantFamilienaam, KlantEmail, KlantGSM, KlantPaswoord ) VALUES (?,?,?,?,?)";
+                       $sql2 = " INSERT INTO tblKlanten (KlantNaam, KlantFamilienaam, KlantEmail, KlantGSM, KlantPaswoord, PostcodeId ) VALUES (?,?,?,?,?,?)";
 
             if($stmt2 = $mysqli->prepare($sql2)) {
-                $stmt2->bind_param('sssss',$klantnaam,$klantfamilienaam,$klantmail, $klantgsm, $klantpaswoord);
+                $stmt2->bind_param('sssssi',$klantnaam,$klantfamilienaam,$klantmail, $klantgsm, $klantpaswoord, $postid);
                 $klantnaam = $mysqli->real_escape_string($_POST['naam']) ;
                 $klantfamilienaam = $mysqli->real_escape_string($_POST['familienaam']) ;
                 $klantmail=$mysqli->real_escape_string($_POST['email']) ;
                 $klantgsm=$mysqli->real_escape_string($_POST['gsm']);
                 $klantpaswoord=$mysqli->real_escape_string($_POST['paswoord']);
+                $postid = $mysqli->real_escape_string($postcodeid);
+                
 
                 if(!$stmt2->execute()){
                     echo 'het uitvoeren van de query is mislukt:';
