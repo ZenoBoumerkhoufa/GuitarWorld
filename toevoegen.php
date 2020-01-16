@@ -1,248 +1,5 @@
 <?php session_start(); ?>
-<script type="text/javascript">
 
-function wijzig()
-{
-
-
-
-   var ok = true;
-if (document.getElementById("naam").value=="Naam**" || document.getElementById("naam").value=="" ){
-    document.getElementById("naamVerplicht").innerHTML="Gelieve een naam in te vullen";
-    ok=false;
-
-        }
-    else{
-        document.getElementById("naamVerplicht").innerHTML="";
-
-    }
-if(document.getElementById("familienaam").value == ""){
-    document.getElementById("familienaamVerplicht").innerHTML="Gelieve een familienaam in te vullen";
-    ok=false;
-}
-    else{
-        document.getElementById("familienaamVerplicht").innerHTML="";
-    }
-if(document.getElementById("email").value == ""){
-    document.getElementById("emailVerplicht").innerHTML="Gelieve een email in te vullen";
-    ok=false;
-}
-    else{
-        document.getElementById("emailVerplicht").innerHTML="";
-    }
-if (document.getElementById("paswoord").value==""){
-    document.getElementById("paswoordVerplicht").innerHTML="Gelieve een paswoord in te vullen";
-    ok=false;
-        }
-    else{
-        document.getElementById("paswoordVerplicht").innerHTML="";
-    }
-
-if (document.getElementById("paswoord").value != "") {
-   var string=document.getElementById("paswoord").value;
-
-	var filter=/(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}/;
-
-     if ( filter.test(string)){
-     document.getElementById("paswoordControle").innerHTML="";
-
-
-    }
-    else{
-         document.getElementById("paswoordControle").innerHTML="Ongeldig paswoord, bevat minstens 1 cijfer en 1 hoofdletter en kleine letter, minimum 8 characters";
-        ok=false;
-
-    }
- }
-
-
-  if (document.getElementById("paswoordConfirm").value==""){
-    document.getElementById("paswoordConfirmVerplicht").innerHTML="Gelieve een bevestigingspaswoord in te vullen";
-    ok=false;
-        }
-    else{
-        document.getElementById("paswoordConfirmVerplicht").innerHTML="";
-
-  if (!(document.getElementById("paswoordConfirm").value==document.getElementById("paswoord").value)){
-    document.getElementById("paswoordConfirmVerplicht").innerHTML="bevestigingspaswoord en paswoord komen niet overeen";
-    ok=false;
-        }
-    else{
-        document.getElementById("paswoordConfirmVerplicht").innerHTML +="";
-    }
-	}
-
-if(document.getElementById("postcode").value == ""){
-    document.getElementById("postcodeVerplicht").innerHTML="Gelieve een postcode in te vullen";
-    ok=false;
-}
-    else{
-        document.getElementById("postcodeVerplicht").innerHTML="";
-    }
-    if(document.getElementById("gemeente").value == ""){
-        document.getElementById("gemeenteVerplicht").innerHTML="Gelieve een gemeente in te vullen";
-        ok=false;
-    }
-    else{
-        document.getElementById("gemeenteVerplicht").innerHTML="";
-    }
-
-
-    if (ok==true){
-
-    document.accountmaken.submit();
-}
-
-}
-
-</script>
- <style type="text/css">
-    .fout {
-	color: #F00;
-}
-    </style>
-
-<!-- ADMIN INLOGGEN -->
-    <?php
-    if((isset($_POST["submit"])) && $_POST['email'] == 'admin@mail.com' && $_POST['paswoord'] == 'admin123'){
-        header("location:admin.php");
-        $_SESSION['ingelogged'] = 1;
-    }
-    ?>
-
-
-    <!-- KLANT AANMAKEN -->
-    <?php
-
-    if ( (isset($_POST["naam"])) && (@$_POST["naam"] != "")){
-
-        $mail = $_POST["email"];
-        $paswoord = $_POST["paswoord"];
-
-        $mysqli= new MySQLi ("localhost","root","","guitarworld");
-        if(mysqli_connect_errno()) {
-            trigger_error('Fout bij verbinding: '.$mysqli->error);
-        }
-        else{
-            
-            $sqlp = "SELECT PostcodeId FROM tblgemeente";
-            if(isset($_POST["gemeente"]) && $_POST["gemeente"] != ""){
-                $sqlp = $sqlp." WHERE Gemeente = '".$_POST["gemeente"]."'";
-            }
-            if(isset($_POST["postcode"]) && $_POST["postcode"] != ""){
-                $sqlp = $sqlp." AND PCode = '".$_POST["postcode"]."'";
-            }
-            if($stmt = $mysqli->prepare($sqlp)){
-                if(!$stmt->execute()){
-                    echo "Het uitvoeren van de query is mislukt: ".$stmt->error." in query: ".$sql2;
-                }
-                else{
-                    $stmt->bind_result($postcodeid);
-                    while($stmt->fetch()){
-                        echo "hallo";
-                    }
-                    
-                }
-                                
-            }
-            else{
-                echo "er zit een fout in de query";
-            }
-                
-            $sql = 'SELECT count(*) as aantal FROM tblKlanten where KlantEmail=? ';
-
-
-
-
-            if($stmt = $mysqli->prepare($sql)) {
-                $stmt->bind_param('s',$mail);
-                if(!$stmt->execute()){
-
-                    echo 'Het uitvoeren van de query is mislukt: '.$stmt->error.' in query: '.$sql;
-                }
-                else {
-                    $stmt->bind_result($aantal);
-                    while($stmt->fetch()) {
-                    }
-
-                    if ($aantal ==0){
-
-                       $sql2 = " INSERT INTO tblKlanten (KlantNaam, KlantFamilienaam, KlantEmail, KlantGSM, KlantPaswoord, PostcodeId ) VALUES (?,?,?,?,?,?)";
-
-            if($stmt2 = $mysqli->prepare($sql2)) {
-                $stmt2->bind_param('sssssi',$klantnaam,$klantfamilienaam,$klantmail, $klantgsm, $klantpaswoord, $postid);
-                $klantnaam = $mysqli->real_escape_string($_POST['naam']) ;
-                $klantfamilienaam = $mysqli->real_escape_string($_POST['familienaam']) ;
-                $klantmail=$mysqli->real_escape_string($_POST['email']) ;
-                $klantgsm=$mysqli->real_escape_string($_POST['gsm']);
-                $klantpaswoord=$mysqli->real_escape_string($_POST['paswoord']);
-                $postid = $mysqli->real_escape_string($postcodeid);
-                
-
-                if(!$stmt2->execute()){
-                    echo 'het uitvoeren van de query is mislukt:';
-                }
-                else{
-                    echo 'Het invoegen is gelukt';
-                    $_SESSION['ingelogged'] = $klantmail;
-                }
-                $stmt2->close();
-            }
-            else{
-                ///echo 'Er zit een fout in de query'.$mysqli->error;
-            }
-                    }
-
-                   else{
-
-                       echo "je account bestaat al";
-
-                   }
-
-                }
-            }
-            else {
-                ///echo 'Er zit een fout in de query: '.$mysqli->error;
-            }
-        }
-
-    }
-
-?>
-
-
-    <!--- KLANT INLOGGEN --->
-    <?php
-    if ((isset($_POST["submit"])) && (isset($_POST["email"])) && ($_POST["email"] != "") && isset($_POST['paswoord']) && ($_POST['paswoord'] != "")){
-        $mail = $_POST["email"];
-        $paswoord = $_POST["paswoord"];
-
-        $mysqli= new MySQLi ("localhost","root","","guitarworld");
-        if(mysqli_connect_errno()) {
-            trigger_error('Fout bij verbinding: '.$mysqli->error);
-        }
-        else{
-
-            $sql = 'SELECT KlantEmail, KlantPaswoord FROM tblKlanten WHERE KlantEmail = "'.$mail.'" AND KlantPaswoord = "'.$paswoord.'"';
-
-            if($stmt = $mysqli->prepare($sql)) {
-                if(!$stmt->execute()){
-                    ///echo 'Het uitvoeren van de query is mislukt: '.$stmt->error.' in query: '.$sql;
-                }
-                else {
-                    $stmt->bind_result($mail, $paswoord);
-                    while($stmt->fetch()) {
-                        $_SESSION['ingelogged'] = $mail;
-                    }
-                }
-                $stmt->close();
-            }
-            else {
-                ///echo 'Er zit een fout in de query: '.$mysqli->error;
-            }
-        }
-    }
-    ?>
 
 
 
@@ -250,7 +7,7 @@ if(document.getElementById("postcode").value == ""){
 <html lang="en">
 <head>
 
-     <title>Contacten</title>
+     <title>Guitarworld</title>
 <!-- 
 Hydro Template 
 http://www.templatemo.com/tm-509-hydro
@@ -299,7 +56,7 @@ http://www.templatemo.com/tm-509-hydro
                     <ul class="nav navbar-nav navbar-nav-first">
                          <li><a href="homepage.php#home" class="smoothScroll">Home</a></li>
                          <li><a href="homepage.php#about" class="smoothScroll">Over ons</a></li>
-                         <li><a href="contacten.php" class="smoothScroll">Contact</a></li>
+                         <li><a href="homepage.php#contact" class="smoothScroll">Contact</a></li>
                     </ul>
 
                     <!-- IN OF UITLOGGEN -->
@@ -338,7 +95,7 @@ http://www.templatemo.com/tm-509-hydro
                <div class="row">
 
                     <div class="col-md-offset-1 col-md-5 col-sm-12">
-                         <h2>Over ons</h2>
+                         <h2>Admin</h2>
                     </div>
                     
                </div>
@@ -350,15 +107,57 @@ http://www.templatemo.com/tm-509-hydro
     <section id="blog-detail" data-stellar-background-ratio="0.5">
           <div class="container">
                <div class="row">
-
-                    <div class="col-md-offset-1 col-md-10 col-sm-12">
+                   <div class="col-md-offset-1 col-md-10 col-sm-12">
                         <div class="section-title">
-                            <h2>Info</h2>
+                            <h2>Producten toevoegen</h2>
                             <span class="line-bar">...</span>
                         </div>
-                        <p>GuitarWorld is een webwinkel die goedkoop goede gitaren wil aanbieden voor beginners, daarom zijn er ook 2de hands gitaren. Deze worden bij ons binnengebracht en wou kuisen deze op zodat die weer goed is voor een volgende eigenaar. Naast de 2de hands gitaren hebben we ook nieuwe gitaren van verschillende merken. Naast de gitaren zelf verkopen we ook nog accessiores zoals straps en gitaar plectrums van verschillende formaten en merken.<br><br>
-                        Voor het gemak van de klant staat bij elk product ook of het binnen is of niet, als je een account maakt of gewoon inlogged dan kan je producten ook in een verlanglijstje plaatsen om deze later gemakkelijk terug te vinden.</p>
+<form id="form1" name="form1" method="post" >
+    <p>Toevoegen van Producten en hun gegevens.</p>
+                           <table>
+            <tr><td>
+                Naam:
+                </td><td>
+    <input type="text" name="naam" id="naam" placeholder="naam" />
+                </td></tr>
+                               <tr><td>
+                Omschrijving:
+                </td><td>
+    <input type="text" name="omschrijving" id="omschrijving" placeholder="omschrijving" />
+                </td></tr>
+                               <tr><td>
+                Prijs:
+                </td><td>
+    <input type="text" name="prijs" id="prijs" placeholder="prijs" />
+                </td></tr>
+                               <tr><td><input type="submit" name="toevoegen" id="toevoegen" value="toevoegen"></td></tr>
+        </table>
+                       
+</form>
+<?php
+        if(isset($_POST["toevoegen"])){
+             $mysqli = new MYSQLi ("localhost","root","","guitarworld");
+                if(mysqli_connect_errno()){
+                    trigger_error('Fout bij de verbinding: '.$mysqli->error);
+                }
+                else{
+                    $sql = "INSERT INTO tblproducten (ProductNaam, ProductOmschrijving, ProductPrijs) VALUES (?, ?, ?)";
+                        $stmt->bind_param("ssi",$naam,$omschrijving,$prijs);
+                        $naam = $mysqli->real_escape_string($_POST["naam"]);
+                        $omschrijving = $mysqli->real_escape_string($_POST["omschrijving"]);
+                        $prijs = $mysqli->real_escape_string($_POST["prijs"]);
                         
+                        if(!$stmt->execute()){
+                            echo "werkt ni: ".$stmt->error." in query: ".$sql;
+                        }
+                        else{
+                            echo "Het invoegen is gelukt";
+                        }
+                    }
+                    $stmt->close();
+                }
+        }
+?>
                    </div>
               </div>
         </div>

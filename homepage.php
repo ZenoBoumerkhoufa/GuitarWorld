@@ -1,3 +1,4 @@
+<?php session_start(); ?>
 <script type="text/javascript">
 
 function wijzig()
@@ -100,25 +101,6 @@ if(document.getElementById("postcode").value == ""){
 	color: #F00;
 }
     </style>
-<!-- PHP -->
-<?php
-session_start();
-?>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 <!-- ADMIN INLOGGEN -->
     <?php
@@ -202,7 +184,7 @@ session_start();
                 }
                 else{
                     echo 'Het invoegen is gelukt';
-                    $_SESSION['ingelogged'] = 1;
+                    $_SESSION['ingelogged'] = $klantmail;
                 }
                 $stmt2->close();
             }
@@ -241,7 +223,7 @@ session_start();
         }
         else{
 
-            $sql = 'SELECT KlantEmail, KlantPaswoord FROM tblKlanten';
+            $sql = 'SELECT KlantEmail, KlantPaswoord FROM tblKlanten WHERE KlantEmail = "'.$mail.'" AND KlantPaswoord = "'.$paswoord.'"';
 
             if($stmt = $mysqli->prepare($sql)) {
                 if(!$stmt->execute()){
@@ -250,11 +232,10 @@ session_start();
                 else {
                     $stmt->bind_result($mail, $paswoord);
                     while($stmt->fetch()) {
-
+                       $_SESSION['ingelogged'] = $mail;
                     }
                 }
                 $stmt->close();
-                $_SESSION['ingelogged'] = 1;
             }
             else {
                 ///echo 'Er zit een fout in de query: '.$mysqli->error;
@@ -317,23 +298,29 @@ session_start();
                          <li><a href="contacten.php" class="smoothScroll">Contacten</a></li>
                     </ul>
 
-                   <!-- IN OF UITLOGGEN -->
+                  <!-- IN OF UITLOGGEN -->
                    <?php
-                        if(isset($_SESSION['ingelogged']) && $_SESSION['ingelogged'] == 1) { ?>
-
+                        if(isset($_SESSION['ingelogged'])) { ?>
+                   
                     <ul class="nav navbar-nav navbar-right">
-                         <li class="section-btn"><a href="homepage.php"  >Uitloggen</a></li>
+                        <li><form method="post" name="form1"><input type="submit" name="uitloggen" class="section-btn" value="Uitloggen"></form></li>
                     </ul>
-
+                       
                     <?php session_destroy(); }
                          else{ ?>
-
+                   
                         <ul class="nav navbar-nav navbar-right">
                          <li class="section-btn"><a href="#" data-toggle="modal" data-target="#modal-form">Inloggen</a></li>
                     </ul>
-
-
-                        <?php } ?>
+                    
+                        
+                        <?php }
+                   
+                   if(isset($_POST["uitloggen"])){
+                       session_destroy();
+                   } 
+                   
+                   ?>
 
                </div>
 
@@ -397,7 +384,7 @@ session_start();
                     <div class="col-md-3 col-sm-6">
                          <!-- WORK THUMB -->
                          <div class="work-thumb">
-                              <a href="<!-- GITARENPAGINA -->">
+                              <a href="gitaren.php">
                                    <img src="images/L_P.jpg" class="img-responsive" alt="gitaren">
 
                                    <div class="work-info">

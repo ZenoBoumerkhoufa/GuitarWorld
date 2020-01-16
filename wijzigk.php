@@ -117,13 +117,8 @@ http://www.templatemo.com/tm-509-hydro
 
 <!-- FORM KLANTEN -->
  <form id="form1" name="form1" method="post">
- <p>Zoeken en wijzigen van klanten en hun gegevens.</p>
+ <p>Wijzigen van klanten en hun gegevens.</p>
      <table>
-         <tr><td>
- Klantnummer:
-             </td><td>
- <input type="text" name="klantnummer" id="klantnummer" placeholder="Klantnr">
-             </td></tr>
          <tr><td>
 Naam:
              </td><td>
@@ -145,7 +140,7 @@ GSM:
  <input type="text" name="gsm" id="gsm" placeholder="gsm" />
              </td></tr>
              <tr><td>
- <input type="submit" name="verzenden" id="verzenden" value="Zoeken" />
+ <input type="submit" name="verzenden" id="verzenden" value="wijzigen" />
              </td><td>
  <input type="reset" name="wissen" id="wissen" value="wissen" />
              </td></tr>
@@ -155,48 +150,21 @@ GSM:
                         <!-- TONEN -->
 <?php
         if(isset($_POST["verzenden"])){
-            if(isset($_POST["klantnummer"]) && $_POST["klantnummer"] != ""){
-                $klantnummer = $_POST["klantnummer"];
-                $mysqli = new MYSQLi ("localhost","root","","guitarworld");
-                if(mysqli_connect_errno()){
-                    trigger_error('Fout bij de verbinding: '.$mysqli->error);
-                }
-                else{
-                    $sql = 'select * from tblKlanten where KlantNr ='.$klantnummer;
-                    if($stmt = $mysqli->prepare($sql)){
-                        if(!$stmt->execute()){
-                            echo 'Het uitvoeren van de query is mislukt: '.$stmt->error.' in query: '.$sql;
-                        }
-                        else{
-                            $stmt->bind_result($klantnr, $klantnaam, $klantfamilienaam, $klantemail, $klantgsm, $klantpaswoord, $postid);
-                            while($stmt->fetch()){
-                                echo $klantnr.'-'.$klantnaam.'-'.$klantfamilienaam.'-'.$klantemail.'-'.$klantgsm.'-'.$klantpaswoord.'-'.$postid.'<form method="post" action="wijzigK.php"><input type="submit" naam="zoekk" id="zoekk" value="wijzig"></form>';
-                            }
-                        }
-                        $stmt->close();
-                    }
-                    else{
-                        echo 'Er zit een fout in de query: '.$mysqli->error;
-                    }
-                }                
-            }
-            else if(isset($_POST["naam"]) && $_POST["naam"] != ""){
+            if(isset($_POST["naam"]) && $_POST["naam"] != ""){
                     $naam = $_POST["naam"];
                     $mysqli = new MYSQLi ("localhost","root","","guitarworld");
                     if(mysqli_connect_errno()){
                         trigger_error('Fout bij de verbinding: '.$mysqli->error);
                     }
                     else{
-                        $sql = "select * from tblKlanten where KlantNaam = '".$naam."'";
+                        $sql = "UPDATE KlantNaam from tblKlanten where KlantNaam = '".$naam."'";
                         if($stmt = $mysqli->prepare($sql)){
                             if(!$stmt->execute()){
                                 echo 'Het uitvoeren van de query is mislukt: '.$stmt->error.' in query: '.$sql;
                             }
                             else{
-                                $stmt->bind_result($klantnr, $klantnaam, $klantfamilienaam, $klantemail, $klantgsm, $klantpaswoord, $postid);
-                                while($stmt->fetch()){
-                                    echo $klantnr.'-'.$klantnaam.'-'.$klantfamilienaam.'-'.$klantemail.'-'.$klantgsm.'-'.$klantpaswoord.'-'.$postid.'<form method="post" action="wijzigK.php"><input type="submit" naam="zoekk" id="zoekk" value="wijzig"></form>';
-                                }
+                                $stmt->bind_param("s", $knaam);
+                                $knaam = $mysqli->real_escape_string($naam);
                             }
                             $stmt->close();
                         }
@@ -212,16 +180,14 @@ GSM:
                         trigger_error('Fout bij de verbinding: '.$mysqli->error);
                     }
                     else{
-                        $sql = "select * from tblKlanten where KlantFamilienaam = '".$familienaam."'";
+                        $sql = "UPDATE KlantFamilienaam from tblKlanten where KlantFamilienaam = '".$familienaam."'";
                         if($stmt = $mysqli->prepare($sql)){
                             if(!$stmt->execute()){
                                 echo 'Het uitvoeren van de query is mislukt: '.$stmt->error.' in query: '.$sql;
                             }
                             else{
-                                $stmt->bind_result($klantnr, $klantnaam, $klantfamilienaam, $klantemail, $klantgsm, $klantpaswoord, $postid);
-                                while($stmt->fetch()){
-                                    echo $klantnr.'-'.$klantnaam.'-'.$klantfamilienaam.'-'.$klantemail.'-'.$klantgsm.'-'.$klantpaswoord.'-'.$postid.'<form method="post" action="wijzig.phpK"><input type="submit" naam="zoekk" id="zoekk" value="wijzig"></form>';
-                                }
+                                $stmt->bind_param("s", $kf);
+                                $kf = $mysqli->real_escape_string($kf);
                             }
                             $stmt->close();
                         }
@@ -237,16 +203,14 @@ GSM:
                         trigger_error('Fout bij de verbinding: '.$mysqli->error);
                     }
                     else{
-                        $sql = "select * from tblKlanten where KlantEmail ='".$mail."'";
+                        $sql = "UPDATE KlantEmail from tblKlanten where KlantEmail ='".$mail."'";
                         if($stmt = $mysqli->prepare($sql)){
                             if(!$stmt->execute()){
                                 echo 'Het uitvoeren van de query is mislukt: '.$stmt->error.' in query: '.$sql;
                             }
                             else{
-                                $stmt->bind_result($klantnr, $klantnaam, $klantfamilienaam, $klantemail, $klantgsm, $klantpaswoord, $postid);
-                                while($stmt->fetch()){
-                                    echo $klantnr.'-'.$klantnaam.'-'.$klantfamilienaam.'-'.$klantemail.'-'.$klantgsm.'-'.$klantpaswoord.'-'.$postid.'<form method="post" action="wijzigK.php"><input type="submit" naam="zoekk" id="zoekk" value="wijzig"></form>';
-                                }
+                                $stmt->bind_param("s", $m);
+                                $m = $mysqli->real_escape_string($m);
                             }
                             $stmt->close();
                         }
@@ -262,16 +226,14 @@ GSM:
                         trigger_error('Fout bij de verbinding: '.$mysqli->error);
                     }
                     else{
-                        $sql = "select * from tblKlanten where KlantGSM ='".$gsm."'";
+                        $sql = "UPDATE KlantGSM from tblKlanten where KlantGSM ='".$gsm."'";
                         if($stmt = $mysqli->prepare($sql)){
                             if(!$stmt->execute()){
                                 echo 'Het uitvoeren van de query is mislukt: '.$stmt->error.' in query: '.$sql;
                             }
                             else{
-                                $stmt->bind_result($klantnr, $klantnaam, $klantfamilienaam, $klantemail, $klantgsm, $klantpaswoord, $postid);
-                                while($stmt->fetch()){
-                                    echo $klantnr.'-'.$klantnaam.'-'.$klantfamilienaam.'-'.$klantemail.'-'.$klantgsm.'-'.$klantpaswoord.'-'.$postid.'<form method="post" action="wijzigK.php"><input type="submit" naam="zoekk" id="zoekk" value="wijzig"></form>';
-                                }
+                                $stmt->bind_param("s", $g);
+                                $g = $mysqli->real_escape_string($g);
                             }
                             $stmt->close();
                         }
@@ -283,95 +245,6 @@ GSM:
         }
                         
 ?>
-                   </div>
-                   
-                   
-                   
-                   <br><br><br><br>
-                   
-                   
-                   
-                   <div class="col-md-offset-1 col-md-10 col-sm-12">
-                        <div class="section-title">
-                            <h2>Producten zoeken en wijzigen</h2>
-                            <span class="line-bar">...</span>
-                        </div>
-<form id="form1" name="form1" method="post">
-    <p>Zoeken en wijzigen van Producten en hun gegevens.</p>
-                           <table>
-            <tr><td>
-    ProductId:
-                </td><td>
-    <input type="text" name="id" id="id" placeholder="ProductId">
-                </td></tr>
-            <tr><td>
-                Naam:
-                </td><td>
-    <input type="text" name="naam" id="naam" placeholder="naam" />
-                </td></tr>
-                <tr><td>
-    <input type="submit" name="verzenden2" id="verzenden2" value="Zoeken" />
-                    </td><td>
-    <input type="reset" name="wissen" id="wissen" value="wissen" />
-                    </td></tr>
-        </table>
-                       
-</form>
-<?php
-        if(isset($_POST["verzenden2"])){
-            if(isset($_POST["id"]) && $_POST["id"] != ""){
-                $id = $_POST["id"];
-                $mysqli = new MYSQLi ("localhost","root","","guitarworld");
-                if(mysqli_connect_errno()){
-                    trigger_error('Fout bij de verbinding: '.$mysqli->error);
-                }
-                else{
-                    $sql = 'select ProductId, ProductNaam, ProductOmschrijving, ProductPrijs from tblProducten where ProductId ='.$id;
-                    if($stmt = $mysqli->prepare($sql)){
-                        if(!$stmt->execute()){
-                            echo 'Het uitvoeren van de query is mislukt: '.$stmt->error.' in query: '.$sql;
-                        }
-                        else{
-                            $stmt->bind_result($productnr, $productnaam, $productomschrijving, $productprijs);
-                            while($stmt->fetch()){
-                                echo "<table><tr><td> ProductId: ".$productnr.'</td></tr><tr><td>Naam: "'.$productnaam.'"</td></tr><tr><td>Omschrijving: "'.$productomschrijving.'"</td></tr><tr><td>Prijs: '.$productprijs.'</td></tr></table><form method="post" action="wijzigp.php"><input type="submit" name="zoekp" id="zoekp" value"wijzig"></form>';
-                            }
-                        }
-                        $stmt->close();
-                    }
-                    else{
-                        echo 'Er zit een fout in de query: '.$mysqli->error;
-                    }
-                }                
-            }
-            else if(isset($_POST["naam"]) && $_POST["naam"] != ""){
-                $naam = $_POST["naam"];
-                $mysqli = new MYSQLi ("localhost","root","","guitarworld");
-                if(mysqli_connect_errno()){
-                    trigger_error('Fout bij de verbinding: '.$mysqli->error);
-                }
-                else{
-                    $sql = "select ProductId, ProductNaam, ProductOmschrijving, ProductPrijs from tblProducten where ProductId ='".$naam."'";
-                    if($stmt = $mysqli->prepare($sql)){
-                        if(!$stmt->execute()){
-                            echo 'Het uitvoeren van de query is mislukt: '.$stmt->error.' in query: '.$sql;
-                        }
-                        else{
-                            $stmt->bind_result($productnr, $productnaam, $productomschrijving, $productprijs);
-                            while($stmt->fetch()){
-                                echo "<table><tr><td> ProductId: ".$productnr.'</td></tr><tr><td>Naam: "'.$productnaam.'"</td></tr><tr><td>Omschrijving: "'.$productomschrijving.'"</td></tr><tr><td>Prijs: '.$productprijs.'</td></tr></table><form method="post" action="wijzigp.php"><input type="submit" name="zoekp" id="zoekp" value"wijzig"></form>';
-                            }
-                        }
-                        $stmt->close();
-                    }
-                    else{
-                        echo 'Er zit een fout in de query: '.$mysqli->error;
-                    }
-                }
-            }
-        }
-?>
-                       <form method="post" action="toevoegen.php"><input type="submit" value="Toevoegen"></form>
                    </div>
               </div>
         </div>

@@ -1,3 +1,4 @@
+<?php session_start(); ?>
 <script type="text/javascript"> 
      
 function wijzig()
@@ -100,25 +101,6 @@ if(document.getElementById("postcode").value == ""){
 	color: #F00;
 }
     </style>
-<!-- PHP -->
-<?php 
-session_start();
-?>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 <!-- ADMIN INLOGGEN -->
     <?php
@@ -213,8 +195,7 @@ session_start();
         }
         else{
             
-            $sql = 'SELECT KlantEmail, KlantPaswoord FROM tblKlanten';
-            
+            $sql = 'SELECT KlantEmail, KlantPaswoord FROM tblKlanten WHERE KlantEmail = "'.$mail.'" AND KlantPaswoord = "'.$paswoord.'"';
             if($stmt = $mysqli->prepare($sql)) {
                 if(!$stmt->execute()){
                     ///echo 'Het uitvoeren van de query is mislukt: '.$stmt->error.' in query: '.$sql;
@@ -294,21 +275,27 @@ http://www.templatemo.com/tm-509-hydro
 
                      <!-- IN OF UITLOGGEN -->
                    <?php
-                        if(isset($_SESSION['ingelogged']) && $_SESSION['ingelogged'] == 1) { ?>
+                        if(isset($_SESSION['ingelogged'])) { ?>
 
                     <ul class="nav navbar-nav navbar-right">
-                         <li class="section-btn"><a href="homepage.php"  >Uitloggen</a></li>
+                         <li><input type="button" name="uitloggen" id="uitloggen" value="Uitloggen" class="section-btn"> </li>
                     </ul>
 
-                    <?php session_destroy(); }
+                    <?php ; }
                          else{ ?>
 
                         <ul class="nav navbar-nav navbar-right">
-                         <li class="section-btn"><a href="#" data-toggle="modal" data-target="#modal-form">Inloggen</a></li>
+                            <li><form method="post"><input type="button" name="inloggen" id="inloggen" value="Inloggen" class="section-btn" data-toggle="modal" data-target="#modal-form"></form></li>
                     </ul>
 
 
-                        <?php } ?>
+                        <?php } 
+                   
+                   if(isset($_POST["uitloggen"])){
+                       session_destroy();
+                   } 
+                   
+                   ?>
                </div>
 
           </div>
@@ -346,18 +333,18 @@ if(mysqli_connect_errno()) {
     trigger_error('Fout bij verbinding: '.$mysqli->error); 
 }
     else{
-        $sql = "SELECT ProductNaam, ProductPrijs, ProductFoto FROM tblProducten";
+        $sql = "SELECT ProductNaam, ProductOmschrijving, ProductPrijs, ProductFoto FROM tblProducten";
         if($stmt = $mysqli->prepare($sql)){
             if(!$stmt->execute()){
             echo 'Het uitvoeren van de query is mislukt: '.$stmt->error.' in query: '.$sql;
             }
         else{
             // AFWERKEN
-            $stmt->bind_result($naam, $prijs, $foto);
+            $stmt->bind_result($naam, $omschrijving, $prijs, $foto);
             while($stmt->fetch()){
                 echo "<div>
-                         <img src='images/producten/gitaren/ESP_E_LTD_BLK.png' alt='gitaar1'>
-                          <div>'".$naam."'<br>".$prijs."</div>
+                         <img src='images/producten/gitaren/".$foto."' alt='gitaar1'>
+                          <div><h3>'".$naam."'</h3><br>".$omschrijving."<br><h3>".$prijs."€</h3></div>
                     </div>";
                 }
             }

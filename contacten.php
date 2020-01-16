@@ -1,84 +1,249 @@
-<!-- PHP -->
-<?php session_start(); ?>
-<!-- ADMIN --> 
-<?php
+<?php session_start(); 
+?>
+<script type="text/javascript">
 
+function wijzig()
+{
+
+
+
+   var ok = true;
+if (document.getElementById("naam").value=="Naam**" || document.getElementById("naam").value=="" ){
+    document.getElementById("naamVerplicht").innerHTML="Gelieve een naam in te vullen";
+    ok=false;
+
+        }
+    else{
+        document.getElementById("naamVerplicht").innerHTML="";
+
+    }
+if(document.getElementById("familienaam").value == ""){
+    document.getElementById("familienaamVerplicht").innerHTML="Gelieve een familienaam in te vullen";
+    ok=false;
+}
+    else{
+        document.getElementById("familienaamVerplicht").innerHTML="";
+    }
+if(document.getElementById("email").value == ""){
+    document.getElementById("emailVerplicht").innerHTML="Gelieve een email in te vullen";
+    ok=false;
+}
+    else{
+        document.getElementById("emailVerplicht").innerHTML="";
+    }
+if (document.getElementById("paswoord").value==""){
+    document.getElementById("paswoordVerplicht").innerHTML="Gelieve een paswoord in te vullen";
+    ok=false;
+        }
+    else{
+        document.getElementById("paswoordVerplicht").innerHTML="";
+    }
+
+if (document.getElementById("paswoord").value != "") {
+   var string=document.getElementById("paswoord").value;
+
+	var filter=/(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}/;
+
+     if ( filter.test(string)){
+     document.getElementById("paswoordControle").innerHTML="";
+
+
+    }
+    else{
+         document.getElementById("paswoordControle").innerHTML="Ongeldig paswoord, bevat minstens 1 cijfer en 1 hoofdletter en kleine letter, minimum 8 characters";
+        ok=false;
+
+    }
+ }
+
+
+  if (document.getElementById("paswoordConfirm").value==""){
+    document.getElementById("paswoordConfirmVerplicht").innerHTML="Gelieve een bevestigingspaswoord in te vullen";
+    ok=false;
+        }
+    else{
+        document.getElementById("paswoordConfirmVerplicht").innerHTML="";
+
+  if (!(document.getElementById("paswoordConfirm").value==document.getElementById("paswoord").value)){
+    document.getElementById("paswoordConfirmVerplicht").innerHTML="bevestigingspaswoord en paswoord komen niet overeen";
+    ok=false;
+        }
+    else{
+        document.getElementById("paswoordConfirmVerplicht").innerHTML +="";
+    }
+	}
+
+if(document.getElementById("postcode").value == ""){
+    document.getElementById("postcodeVerplicht").innerHTML="Gelieve een postcode in te vullen";
+    ok=false;
+}
+    else{
+        document.getElementById("postcodeVerplicht").innerHTML="";
+    }
+    if(document.getElementById("gemeente").value == ""){
+        document.getElementById("gemeenteVerplicht").innerHTML="Gelieve een gemeente in te vullen";
+        ok=false;
+    }
+    else{
+        document.getElementById("gemeenteVerplicht").innerHTML="";
+    }
+
+
+    if (ok==true){
+
+    document.accountmaken.submit();
+}
+
+}
+
+</script>
+ <style type="text/css">
+    .fout {
+	color: #F00;
+}
+    </style>
+
+<!-- ADMIN INLOGGEN -->
+    <?php
     if((isset($_POST["submit"])) && $_POST['email'] == 'admin@mail.com' && $_POST['paswoord'] == 'admin123'){
         header("location:admin.php");
         $_SESSION['ingelogged'] = 1;
     }
     ?>
 
-<!-- KLANT AANMAKEN -->
+
+    <!-- KLANT AANMAKEN -->
     <?php
-    if ((isset($_POST["submit"])) && (isset($_POST["naam"])) && (@$_POST["naam"] != "") && isset($_POST['familienaam']) && ($_POST['familienaam'] != "")){
+
+    if ( (isset($_POST["naam"])) && (@$_POST["naam"] != "")){
+
+        $mail = $_POST["email"];
+        $paswoord = $_POST["paswoord"];
+
         $mysqli= new MySQLi ("localhost","root","","guitarworld");
-        
         if(mysqli_connect_errno()) {
-            
             trigger_error('Fout bij verbinding: '.$mysqli->error);
-            
         }
         else{
             
-            $sql = " INSERT INTO tblKlanten (KlantNaam, KlantFamilienaam, KlantEmail, KlantGSM, KlantPaswoord ) VALUES (?,?,?,?,?)";
-            
+            $sqlp = "SELECT PostcodeId FROM tblgemeente";
+            if(isset($_POST["gemeente"]) && $_POST["gemeente"] != ""){
+                $sqlp = $sqlp." WHERE Gemeente = '".$_POST["gemeente"]."'";
+            }
+            if(isset($_POST["postcode"]) && $_POST["postcode"] != ""){
+                $sqlp = $sqlp." AND PCode = '".$_POST["postcode"]."'";
+            }
+            if($stmt = $mysqli->prepare($sqlp)){
+                if(!$stmt->execute()){
+                    echo "Het uitvoeren van de query is mislukt: ".$stmt->error." in query: ".$sql2;
+                }
+                else{
+                    $stmt->bind_result($postcodeid);
+                    while($stmt->fetch()){
+                        echo "hallo";
+                    }
+                    
+                }
+                                
+            }
+            else{
+                echo "er zit een fout in de query";
+            }
+                
+            $sql = 'SELECT count(*) as aantal FROM tblKlanten where KlantEmail=? ';
+
+
+
+
             if($stmt = $mysqli->prepare($sql)) {
-                $stmt->bind_param('sssss',$klantnaam,$klantfamilienaam,$klantmail, $klantgsm, $klantpaswoord);
+                $stmt->bind_param('s',$mail);
+                if(!$stmt->execute()){
+
+                    echo 'Het uitvoeren van de query is mislukt: '.$stmt->error.' in query: '.$sql;
+                }
+                else {
+                    $stmt->bind_result($aantal);
+                    while($stmt->fetch()) {
+                    }
+
+                    if ($aantal ==0){
+
+                       $sql2 = " INSERT INTO tblKlanten (KlantNaam, KlantFamilienaam, KlantEmail, KlantGSM, KlantPaswoord, PostcodeId ) VALUES (?,?,?,?,?,?)";
+
+            if($stmt2 = $mysqli->prepare($sql2)) {
+                $stmt2->bind_param('sssssi',$klantnaam,$klantfamilienaam,$klantmail, $klantgsm, $klantpaswoord, $postid);
                 $klantnaam = $mysqli->real_escape_string($_POST['naam']) ;
                 $klantfamilienaam = $mysqli->real_escape_string($_POST['familienaam']) ;
                 $klantmail=$mysqli->real_escape_string($_POST['email']) ;
                 $klantgsm=$mysqli->real_escape_string($_POST['gsm']);
                 $klantpaswoord=$mysqli->real_escape_string($_POST['paswoord']);
+                $postid = $mysqli->real_escape_string($postcodeid);
                 
-                if(!$stmt->execute()){
-                    //echo 'het uitvoeren van de query is mislukt:';
+
+                if(!$stmt2->execute()){
+                    echo 'het uitvoeren van de query is mislukt:';
                 }
                 else{
-                    //echo 'Het invoegen is gelukt';
-                    $_SESSION['ingelogged'] = 1;
+                    echo 'Het invoegen is gelukt';
+                    $_SESSION['ingelogged'] = $klantmail;
                 }
-                $stmt->close();
+                $stmt2->close();
             }
             else{
-                //echo 'Er zit een fout in de query'.$mysqli->error;
+                ///echo 'Er zit een fout in de query'.$mysqli->error;
+            }
+                    }
+
+                   else{
+
+                       echo "je account bestaat al";
+
+                   }
+
+                }
+            }
+            else {
+                ///echo 'Er zit een fout in de query: '.$mysqli->error;
             }
         }
-    }
-    
-    ?>
 
-<!--- KLANT INLOGGEN --->
+    }
+
+?>
+
+
+    <!--- KLANT INLOGGEN --->
     <?php
     if ((isset($_POST["submit"])) && (isset($_POST["email"])) && ($_POST["email"] != "") && isset($_POST['paswoord']) && ($_POST['paswoord'] != "")){
         $mail = $_POST["email"];
         $paswoord = $_POST["paswoord"];
-        
+
         $mysqli= new MySQLi ("localhost","root","","guitarworld");
         if(mysqli_connect_errno()) {
             trigger_error('Fout bij verbinding: '.$mysqli->error);
         }
         else{
-            $sql= "select KlantEmail, KlantPaswoord from tblKlanten";
+
+            $sql = 'SELECT KlantEmail, KlantPaswoord FROM tblKlanten WHERE KlantEmail = "'.$mail.'" AND KlantPaswoord = "'.$paswoord.'"';
+
             if($stmt = $mysqli->prepare($sql)) {
                 if(!$stmt->execute()){
-                    //echo 'Het uitvoeren van de query is mislukt: '.$stmt->error.' in query: '.$sql;
+                    ///echo 'Het uitvoeren van de query is mislukt: '.$stmt->error.' in query: '.$sql;
                 }
                 else {
                     $stmt->bind_result($mail, $paswoord);
                     while($stmt->fetch()) {
-                        $_SESSION['ingelogged'] = 1;
+                        $_SESSION['ingelogged'] = $mail;
                     }
                 }
                 $stmt->close();
             }
             else {
-                //echo 'Er zit een fout in de query: '.$mysqli->error;
+                ///echo 'Er zit een fout in de query: '.$mysqli->error;
             }
-        }    
+        }
     }
-    
-?>
+    ?>
 
 
 <!DOCTYPE html>
@@ -139,10 +304,10 @@ http://www.templatemo.com/tm-509-hydro
 
                     <!-- IN OF UITLOGGEN -->
                    <?php
-                        if(isset($_SESSION['ingelogged']) && $_SESSION['ingelogged'] == 1) { ?>
+                        if(isset($_SESSION['ingelogged'])) { ?>
                    
                     <ul class="nav navbar-nav navbar-right">
-                         <li class="section-btn"><a href="homepage.php"  >Uitloggen</a></li>
+                        <li><form method="post" name="form1"><input type="submit" name="uitloggen" class="section-btn" value="Uitloggen"></form></li>
                     </ul>
                        
                     <?php session_destroy(); }
@@ -153,7 +318,13 @@ http://www.templatemo.com/tm-509-hydro
                     </ul>
                     
                         
-                        <?php } ?>
+                        <?php } 
+                   
+                   if(isset($_POST["uitloggen"])){
+                       session_destroy();
+                   } 
+                   
+                   ?>
                </div>
 
           </div>
