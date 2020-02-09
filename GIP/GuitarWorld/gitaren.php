@@ -364,10 +364,11 @@ if(mysqli_connect_errno()) {
                 $stmt->bind_result($naam, $omschrijving, $prijs, $foto);
                 $a = 1;
                 while($stmt->fetch()){
-                    echo "<td><a href='product.php'> <div>
+                    echo "<td><a href='product.php'>
                     <img src='images/producten/".$foto."' alt='".$naam."'>
                     <div><h3>'".$naam."'</h3><br>".$omschrijving."<br><h3>".$prijs."€</h3></div>
                     </div></a></td>";
+                    $_SESSION["product"] = $naam;
                     if($a % 4 == 0){
                         echo "</tr><tr>";
                     }
