@@ -1,20 +1,20 @@
 <?php session_start(); ?>
-<script type="text/javascript"> 
-     
+<script type="text/javascript">
+
 function wijzig()
 {
-   
-  
+
+
 
    var ok = true;
 if (document.getElementById("naam").value=="Naam**" || document.getElementById("naam").value=="" ){
     document.getElementById("naamVerplicht").innerHTML="Gelieve een naam in te vullen";
     ok=false;
-   
+
         }
     else{
         document.getElementById("naamVerplicht").innerHTML="";
-      
+
     }
 if(document.getElementById("familienaam").value == ""){
     document.getElementById("familienaamVerplicht").innerHTML="Gelieve een familienaam in te vullen";
@@ -37,32 +37,32 @@ if (document.getElementById("paswoord").value==""){
     else{
         document.getElementById("paswoordVerplicht").innerHTML="";
     }
- 
+
 if (document.getElementById("paswoord").value != "") {
    var string=document.getElementById("paswoord").value;
-    
+
 	var filter=/(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}/;
-   
+
      if ( filter.test(string)){
      document.getElementById("paswoordControle").innerHTML="";
-        
-        
+
+
     }
     else{
          document.getElementById("paswoordControle").innerHTML="Ongeldig paswoord, bevat minstens 1 cijfer en 1 hoofdletter en kleine letter, minimum 8 characters";
         ok=false;
-        
+
     }
  }
- 
- 
+
+
   if (document.getElementById("paswoordConfirm").value==""){
     document.getElementById("paswoordConfirmVerplicht").innerHTML="Gelieve een bevestigingspaswoord in te vullen";
     ok=false;
         }
     else{
         document.getElementById("paswoordConfirmVerplicht").innerHTML="";
-   
+
   if (!(document.getElementById("paswoordConfirm").value==document.getElementById("paswoord").value)){
     document.getElementById("paswoordConfirmVerplicht").innerHTML="bevestigingspaswoord en paswoord komen niet overeen";
     ok=false;
@@ -71,7 +71,7 @@ if (document.getElementById("paswoord").value != "") {
         document.getElementById("paswoordConfirmVerplicht").innerHTML +="";
     }
 	}
-    
+
 if(document.getElementById("postcode").value == ""){
     document.getElementById("postcodeVerplicht").innerHTML="Gelieve een postcode in te vullen";
     ok=false;
@@ -87,12 +87,12 @@ if(document.getElementById("postcode").value == ""){
         document.getElementById("gemeenteVerplicht").innerHTML="";
     }
 
- 
+
     if (ok==true){
 
     document.accountmaken.submit();
 }
-    
+
 }
 
 </script>
@@ -104,80 +104,108 @@ if(document.getElementById("postcode").value == ""){
 
 <!-- ADMIN INLOGGEN -->
     <?php
-    if((isset($_POST["submit"])) && $_POST['email'] == 'admin@mail.com' && $_POST['paswoord'] == 'admin123'){
-        header("location:admin.php");
+    if((isset($_POST["submit"])) && $_POST['email'] == 'admin@mail.com' && $_POST['paswoord'] == 'Admin123'){
         $_SESSION['ingelogged'] = 1;
+        header("location:admin.php");
     }
     ?>
-  
+
 
     <!-- KLANT AANMAKEN -->
     <?php
+
     if ( (isset($_POST["naam"])) && (@$_POST["naam"] != "")){
-        
+
         $mail = $_POST["email"];
         $paswoord = $_POST["paswoord"];
+
         $mysqli= new MySQLi ("localhost","root","","guitarworld");
         if(mysqli_connect_errno()) {
             trigger_error('Fout bij verbinding: '.$mysqli->error);
         }
         else{
             
+            $sqlp = "SELECT PostcodeId FROM tblgemeente";
+            if(isset($_POST["gemeente"]) && $_POST["gemeente"] != ""){
+                $sqlp = $sqlp." WHERE Gemeente = '".$_POST["gemeente"]."'";
+            }
+            if(isset($_POST["postcode"]) && $_POST["postcode"] != ""){
+                $sqlp = $sqlp." AND PCode = '".$_POST["postcode"]."'";
+            }
+            if($stmt = $mysqli->prepare($sqlp)){
+                if(!$stmt->execute()){
+                    echo "Het uitvoeren van de query is mislukt: ".$stmt->error." in query: ".$sql2;
+                }
+                else{
+                    $stmt->bind_result($postcodeid);
+                    while($stmt->fetch()){
+                        echo "hallo";
+                    }
+                    
+                }
+                                
+            }
+            else{
+                echo "er zit een fout in de query";
+            }
+                
             $sql = 'SELECT count(*) as aantal FROM tblKlanten where KlantEmail=? ';
-            
-            
-            
-            
+
+
+
+
             if($stmt = $mysqli->prepare($sql)) {
                 $stmt->bind_param('s',$mail);
                 if(!$stmt->execute()){
-                    
+
                     echo 'Het uitvoeren van de query is mislukt: '.$stmt->error.' in query: '.$sql;
                 }
                 else {
                     $stmt->bind_result($aantal);
                     while($stmt->fetch()) {
                     }
-                    
+
                     if ($aantal ==0){
-                        
-                       $sql2 = " INSERT INTO tblKlanten (KlantNaam, KlantFamilienaam, KlantEmail, KlantGSM, KlantPaswoord ) VALUES (?,?,?,?,?)";
-            
+
+                       $sql2 = " INSERT INTO tblKlanten (KlantNaam, KlantFamilienaam, KlantEmail, KlantGSM, KlantPaswoord, PostcodeId ) VALUES (?,?,?,?,?,?)";
+
             if($stmt2 = $mysqli->prepare($sql2)) {
-                $stmt2->bind_param('sssss',$klantnaam,$klantfamilienaam,$klantmail, $klantgsm, $klantpaswoord);
+                $stmt2->bind_param('sssssi',$klantnaam,$klantfamilienaam,$klantmail, $klantgsm, $klantpaswoord, $postid);
                 $klantnaam = $mysqli->real_escape_string($_POST['naam']) ;
                 $klantfamilienaam = $mysqli->real_escape_string($_POST['familienaam']) ;
                 $klantmail=$mysqli->real_escape_string($_POST['email']) ;
                 $klantgsm=$mysqli->real_escape_string($_POST['gsm']);
                 $klantpaswoord=$mysqli->real_escape_string($_POST['paswoord']);
+                $postid = $mysqli->real_escape_string($postcodeid);
                 
+
                 if(!$stmt2->execute()){
                     echo 'het uitvoeren van de query is mislukt:';
                 }
                 else{
                     echo 'Het invoegen is gelukt';
-                    $_SESSION['ingelogged'] = 1;
+                    $_SESSION['ingelogged'] = $klantnaam;
                 }
                 $stmt2->close();
             }
             else{
                 ///echo 'Er zit een fout in de query'.$mysqli->error;
-            }    
+            }
                     }
-                    
+
                    else{
-                       
+
                        echo "je account bestaat al";
-                       
-                   } 
-                    
-                } 
+
+                   }
+
+                }
             }
             else {
                 ///echo 'Er zit een fout in de query: '.$mysqli->error;
             }
-        }       
-            
+        }
+
     }
 
 ?>
@@ -207,7 +235,7 @@ if(document.getElementById("postcode").value == ""){
                     }
                 }
                 $stmt->close();
-                $_SESSION['ingelogged'] = 1;
+                $_SESSION['ingelogged'] = $mail;
             }
             else {
                 ///echo 'Er zit een fout in de query: '.$mysqli->error;
@@ -270,31 +298,23 @@ http://www.templatemo.com/tm-509-hydro
                     <ul class="nav navbar-nav navbar-nav-first">
                          <li><a href="homepage.php#home" class="smoothScroll">Home</a></li>
                          <li><a href="homepage.php#about" class="smoothScroll">Over ons</a></li>
-                         <li><a href="homepage.php#contact" class="smoothScroll">Contact</a></li>
+                         <li><a href="gitaren.php" class="smoothScroll">Shop</a></li>
+                        <li><img src="images/cart.png"></li>
                     </ul>
 
                      <!-- IN OF UITLOGGEN -->
-                   <?php
-                        if(isset($_SESSION['ingelogged'])) { ?>
-
+                   <?php if(isset($_SESSION['ingelogged'])) { ?>
                     <ul class="nav navbar-nav navbar-right">
-                         <li><input type="button" name="uitloggen" id="uitloggen" value="Uitloggen" class="section-btn"> </li>
+                        <li><form  method="post" action="homepage.php" ><input type="submit" name="uitloggen" id="uitloggen" value="Uitloggen" class="section-btn"></form></li>
                     </ul>
-
-                    <?php ; }
-                         else{ ?>
-
-                        <ul class="nav navbar-nav navbar-right">
-                            <li><form method="post"><input type="button" name="inloggen" id="inloggen" value="Inloggen" class="section-btn" data-toggle="modal" data-target="#modal-form"></form></li>
+                    <?php } else{ ?>
+                    <ul class="nav navbar-nav navbar-right">
+                         <li class="section-btn"><a href="#" data-toggle="modal" data-target="#modal-form">Inloggen</a></li>
                     </ul>
-
-
-                        <?php } 
-                   
+                   <?php }
                    if(isset($_POST["uitloggen"])){
                        session_destroy();
                    } 
-                   
                    ?>
                </div>
 
@@ -323,39 +343,61 @@ http://www.templatemo.com/tm-509-hydro
                <div class="row">
                     <div class="col-md-offset-1 col-md-10 col-sm-12">
                         <div class="col-md-3 col-sm-6">
-                                 
-                                 
-                                 
-   <!-- PRINTEN -->
-    <?php
-    $mysqli= new MySQLi ("localhost","root","","guitarworld");
+                            
+                            <!---ZOEKBALK--->
+                            
+                            <form method="post">
+                            <input id="artikelzoeken" type="search" name="artikelzoeken" value="" placeholder="Zoeken naar...." autocomplete="off">
+                            </form>
+                            
+                            <table width=80% margin=10 padding=10>
+                            
+                            <?php
+                            
+                            if(isset($_POST["artikelzoeken"])){
+                                $zoek1 = $_POST["artikelzoeken"];
+                            }else
+                            {
+                                $zoek1 = "%";
+                            }
+                                
+                             $mysqli= new MySQLi ("localhost","root","","guitarworld");
 if(mysqli_connect_errno()) {
     trigger_error('Fout bij verbinding: '.$mysqli->error); 
 }
     else{
-        $sql = "SELECT ProductNaam, ProductOmschrijving, ProductPrijs, ProductFoto FROM tblProducten";
+        $sql = "SELECT ProductNaam, ProductOmschrijving, ProductPrijs, ProductFoto FROM tblProducten WHERE ProductNaam LIKE ?";
         if($stmt = $mysqli->prepare($sql)){
+            $stmt->bind_param("s",$zoek);
+            $zoek = "%".$zoek1."%";
             if(!$stmt->execute()){
             echo 'Het uitvoeren van de query is mislukt: '.$stmt->error.' in query: '.$sql;
             }
-        else{
-            // AFWERKEN
-            $stmt->bind_result($naam, $omschrijving, $prijs, $foto);
-            while($stmt->fetch()){
-                echo "<div>
-                         <img src='images/producten/gitaren/".$foto."' alt='gitaar1'>
-                          <div><h3>'".$naam."'</h3><br>".$omschrijving."<br><h3>".$prijs."€</h3></div>
-                    </div>";
+            else{
+                $stmt->bind_result($naam, $omschrijving, $prijs, $foto);
+                $a = 1;
+                while($stmt->fetch()){
+                    echo "<td><a href='product.php'>
+                    <img src='images/producten/".$foto."' alt='".$naam."'>
+                    <div><h3>'".$naam."'</h3><br>".$omschrijving."<br><h3>".$prijs."€</h3></div>
+                    </div></a></td>";
+                    $_SESSION["product"] = $naam;
+                    if($a % 4 == 0){
+                        echo "</tr><tr>";
+                    }
+                    $a++;
                 }
             }
-        
         $stmt->close();
         }
-    else{
-        echo 'Er zit een fout in de query: '.$mysqli->error;
+        else{
+            echo 'Er zit een fout in de query: '.$mysqli->error;
         }
     }
-?>
+                            
+                            
+                            ?>
+                                </table>
                         </div>
                     </div>
                </div>

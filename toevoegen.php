@@ -1,6 +1,33 @@
 <?php session_start(); ?>
 
-
+<?php
+        if(isset($_POST["toevoegen"])){
+             $mysqli = new MYSQLi ("localhost","root","","guitarworld");
+                if(mysqli_connect_errno()){
+                    trigger_error('Fout bij de verbinding: '.$mysqli->error);
+                }
+                else{
+                  
+                    
+                    
+                    $sql = "INSERT INTO tblproducten (ProductNaam, ProductOmschrijving, ProductPrijs, ProductFoto) VALUES (?, ?, ?,?)";
+                      if($stmt = $mysqli->prepare($sql)){   
+                           $stmt->bind_param("ssis",$naam,$omschrijving,$prijs,$foto);
+                        $naam = $mysqli->real_escape_string($_POST["naam"]);
+                        $omschrijving = $mysqli->real_escape_string($_POST["omschrijving"]);
+                        $prijs = $mysqli->real_escape_string($_POST["prijs"]);
+                        $foto = $mysqli->real_escape_string($_POST["foto"]); 
+                        if(!$stmt->execute()){
+                            echo "werkt niet: ".$stmt->error." in query: ".$sql;
+                        }
+                        else{
+                            $mededeling = "Product succesvol toegevoegd";
+                        }
+                   
+                        $stmt->close();}
+                      }         
+        }
+?>
 
 
 <!DOCTYPE html>
@@ -59,29 +86,16 @@ http://www.templatemo.com/tm-509-hydro
                          <li><a href="homepage.php#contact" class="smoothScroll">Contact</a></li>
                     </ul>
 
-                    <!-- IN OF UITLOGGEN -->
-                   <?php
-                        if(isset($_SESSION['ingelogged'])) { ?>
-
-                    <ul class="nav navbar-nav navbar-right">
-                         <li><input type="button" name="uitloggen" id="uitloggen" value="Uitloggen" class="section-btn"> </li>
-                    </ul>
-
-                    <?php ; }
-                         else{ ?>
-
+                    <!-- UITLOGGEN -->
                         <ul class="nav navbar-nav navbar-right">
-                            <li><form method="post"><input type="button" name="inloggen" id="inloggen" value="Inloggen" class="section-btn" data-toggle="modal" data-target="#modal-form"></form></li>
+                            <li><form method="post"><input type="submit" name="uitloggen" id="uitloggen" value="Terug" class="section-btn"></form></li>
                     </ul>
-
-
-                        <?php } 
-                   
+                   <?php
                    if(isset($_POST["uitloggen"])){
-                       session_destroy();
+                       header("location:admin.php");
                    } 
-                   
                    ?>
+                   
                </div>
 
           </div>
@@ -129,35 +143,20 @@ http://www.templatemo.com/tm-509-hydro
                 Prijs:
                 </td><td>
     <input type="text" name="prijs" id="prijs" placeholder="prijs" />
+                </td></tr>      
+                  <tr><td>
+                      Foto:
+                  </td><td>
+     <input type="text" name="foto" id="foto" placeholder="foto">
                 </td></tr>
-                               <tr><td><input type="submit" name="toevoegen" id="toevoegen" value="toevoegen"></td></tr>
+                <tr><td>
+      <input type="submit" name="toevoegen" id="toevoegen" value="toevoegen">
+                  </td></tr>
         </table>
                        
 </form>
-<?php
-        if(isset($_POST["toevoegen"])){
-             $mysqli = new MYSQLi ("localhost","root","","guitarworld");
-                if(mysqli_connect_errno()){
-                    trigger_error('Fout bij de verbinding: '.$mysqli->error);
-                }
-                else{
-                    $sql = "INSERT INTO tblproducten (ProductNaam, ProductOmschrijving, ProductPrijs) VALUES (?, ?, ?)";
-                        $stmt->bind_param("ssi",$naam,$omschrijving,$prijs);
-                        $naam = $mysqli->real_escape_string($_POST["naam"]);
-                        $omschrijving = $mysqli->real_escape_string($_POST["omschrijving"]);
-                        $prijs = $mysqli->real_escape_string($_POST["prijs"]);
-                        
-                        if(!$stmt->execute()){
-                            echo "werkt ni: ".$stmt->error." in query: ".$sql;
-                        }
-                        else{
-                            echo "Het invoegen is gelukt";
-                        }
-                    }
-                    $stmt->close();
-                }
-        }
-?>
+                       <p><?php if (isset($mededeling)){echo $mededeling;} ?></p>
+
                    </div>
               </div>
         </div>

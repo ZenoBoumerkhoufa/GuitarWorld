@@ -104,9 +104,9 @@ if(document.getElementById("postcode").value == ""){
 
 <!-- ADMIN INLOGGEN -->
     <?php
-    if((isset($_POST["submit"])) && $_POST['email'] == 'admin@mail.com' && $_POST['paswoord'] == 'admin123'){
-        header("location:admin.php");
+    if((isset($_POST["submit"])) && $_POST['email'] == 'admin@mail.com' && $_POST['paswoord'] == 'Admin123'){
         $_SESSION['ingelogged'] = 1;
+        header("location:admin.php");
     }
     ?>
 
@@ -214,8 +214,6 @@ if(document.getElementById("postcode").value == ""){
     <!--- KLANT INLOGGEN --->
     <?php
     if ((isset($_POST["submit"])) && (isset($_POST["email"])) && ($_POST["email"] != "") && isset($_POST['paswoord']) && ($_POST['paswoord'] != "")){
-        $mail = $_POST["email"];
-        $paswoord = $_POST["paswoord"];
 
         $mysqli= new MySQLi ("localhost","root","","guitarworld");
         if(mysqli_connect_errno()) {
@@ -223,16 +221,19 @@ if(document.getElementById("postcode").value == ""){
         }
         else{
 
-            $sql = 'SELECT KlantEmail, KlantPaswoord FROM tblKlanten WHERE KlantEmail = "'.$mail.'" AND KlantPaswoord = "'.$paswoord.'"';
+            $sql = 'SELECT KlantEmail FROM tblKlanten WHERE KlantEmail = ? AND KlantPaswoord = ?';
 
             if($stmt = $mysqli->prepare($sql)) {
+                $stmt->bind_param('ss',$mail,$paswoord);
+                $mail = $_POST["email"];
+                $paswoord = $_POST["paswoord"];
                 if(!$stmt->execute()){
                     ///echo 'Het uitvoeren van de query is mislukt: '.$stmt->error.' in query: '.$sql;
                 }
                 else {
-                    $stmt->bind_result($mail, $paswoord);
+                    $stmt->bind_result($mail_persoon);
                     while($stmt->fetch()) {
-                       $_SESSION['ingelogged'] = $mail;
+                       $_SESSION['ingelogged'] = $mail_persoon;
                     }
                 }
                 $stmt->close();
@@ -295,35 +296,25 @@ if(document.getElementById("postcode").value == ""){
                     <ul class="nav navbar-nav navbar-nav-first">
                          <li><a href="#home" class="smoothScroll">Home</a></li>
                         <li><a href="info.php" class="smoothScroll">Over ons</a></li>
-                         <li><a href="contacten.php" class="smoothScroll">Contacten</a></li>
+                         <li><a href="gitaren.php" class="smoothScroll">Shop</a></li>
+                        <li><img src="images/cart.png"></li>
                     </ul>
 
                   <!-- IN OF UITLOGGEN -->
-                   <?php
-                        if(isset($_SESSION['ingelogged'])) { ?>
-                   
+                   <?php if(isset($_SESSION['ingelogged'])) { ?>
                     <ul class="nav navbar-nav navbar-right">
-                        <li><form method="post" name="form1"><input type="submit" name="uitloggen" class="section-btn" value="Uitloggen"></form></li>
+                        <li><form  method="post" action="homepage.php" ><input type="submit" name="uitloggen" id="uitloggen" value="Uitloggen" class="section-btn"></form></li>
                     </ul>
-                       
-                    <?php session_destroy(); }
-                         else{ ?>
-                   
-                        <ul class="nav navbar-nav navbar-right">
+                    <?php } else{ ?>
+                    <ul class="nav navbar-nav navbar-right">
                          <li class="section-btn"><a href="#" data-toggle="modal" data-target="#modal-form">Inloggen</a></li>
                     </ul>
-                    
-                        
-                        <?php }
-                   
+                   <?php }
                    if(isset($_POST["uitloggen"])){
                        session_destroy();
                    } 
-                   
                    ?>
-
                </div>
-
           </div>
      </section>
 
@@ -342,7 +333,7 @@ if(document.getElementById("postcode").value == ""){
 
                     <div class="col-md-6 col-sm-12">
                          <div class="home-video">
-                              <img src="images/gitaren_muur.jpg">
+                              <img src="images/gitaarmuur.jpg">
                          </div>
                     </div>
 
@@ -362,7 +353,7 @@ if(document.getElementById("postcode").value == ""){
                                    <h2>Over ons</h2>
                                    <span class="line-bar">...</span>
                               </div>
-                              <p>Hier bij GuitarWorld vind je alle verschillende elektrische gitaren voor beginners tot gevorderde. We hebben ook accessiores voor bij deze gitaren, van snaren en straps tot de verschillende gitaar kabels.</p>
+                              <p>Hier bij GuitarWorld vind je alle verschillende elektrische gitaren voor beginners tot gevorderden. We hebben ook accessoires voor bij deze gitaren, van snaren en straps tot de verschillende gitaarkabels.</p>
                          </div>
                     </div>
 
@@ -385,7 +376,7 @@ if(document.getElementById("postcode").value == ""){
                          <!-- WORK THUMB -->
                          <div class="work-thumb">
                               <a href="gitaren.php">
-                                   <img src="images/L_P.jpg" class="img-responsive" alt="gitaren">
+                                   <img src="images/G_Les_Paul.jpg" class="img-responsive" alt="gitaren">
 
                                    <div class="work-info">
                                         <h3>Gitaren</h3>
@@ -411,7 +402,7 @@ if(document.getElementById("postcode").value == ""){
                          <!-- WORK THUMB -->
                          <div class="work-thumb">
                               <a href="contacten.php">
-                                   <img src="images/contacten.jpg" class="img-responsive" alt="Work">
+                                   <img src="images/contacten.jpg" class="img-responsive" alt="Contact">
 
                                    <div class="work-info">
                                         <h3>Contacten</h3>
@@ -424,7 +415,7 @@ if(document.getElementById("postcode").value == ""){
                          <!-- WORK THUMB -->
                          <div class="work-thumb">
                               <a href="info.php">
-                                   <img src="images/info.jpg" class="img-responsive" alt="Work">
+                                   <img src="images/info.jpg" class="img-responsive" alt="Info">
 
                                    <div class="work-info">
                                         <h3>Informatie</h3>
@@ -462,19 +453,7 @@ if(document.getElementById("postcode").value == ""){
                               </div>
 
                               <div class="col-md-6 col-sm-6">
-                                   <input type="tel" class="form-control" placeholder="gsm-nummer" id="cf-number" name="cf-number" required="">
-                              </div>
-
-                              <div class="col-md-6 col-sm-6">
-                                   <select class="form-control" id="cf-budgets" name="cf-budgets">
-                                        <option>Budget</option>
-                                        <option>€500 tot €1,000</option>
-                                        <option>€1,000 tot €2,200</option>
-                                        <option>€2,200 tot €4,500</option>
-                                        <option>€4,500 tot €7,500</option>
-                                        <option>€7,500 tot €12,000</option>
-                                        <option>€12,000 of meer</option>
-                                   </select>
+                                   <input type="tel" class="form-control" placeholder="GSM-nummer" id="cf-number" name="cf-number" required="">
                               </div>
 
                               <div class="col-md-12 col-sm-12">
@@ -482,7 +461,7 @@ if(document.getElementById("postcode").value == ""){
                               </div>
 
                               <div class="col-md-4 col-sm-12">
-                                   <input type="submit" class="form-control" name="submit" value="Verstuur">
+                                   <input type="submit" class="form-control" name="submit" id="submit" value="Verstuur">
                               </div>
 
                          </form>
@@ -583,7 +562,7 @@ if(document.getElementById("postcode").value == ""){
                                         <div class="tab-content">
                                              <div role="tabpanel" class="tab-pane fade in active" id="sign_up">
                                                   <form action="homepage.php" method="post" name="accountmaken" id="accountmaken">
-                                                       <input type="text" class="form-control" name="naam" id="naam" placeholder="Naam**" >
+                                                       <input type="text" class="form-control" name="naam" id="naam" placeholder="Naam*" >
                                                        <label id="naamVerplicht" class="fout"></label>
                                                        <input type="text" class="form-control" name="familienaam" id="familienaam" placeholder="Familienaam*" required>
                                                        <label id="familienaamVerplicht" class="fout"></label>
@@ -607,7 +586,7 @@ if(document.getElementById("postcode").value == ""){
                                                   <form action="#" method="post">
                                                        <input type="email" class="form-control" name="email" placeholder="Email" required>
                                                        <input type="password" class="form-control" name="paswoord" placeholder="Paswoord"required>
-                                                       <input type="submit" class="form-control" name="submit" value="Inloggen">
+                                                       <input type="submit" class="form-control" name="submit" id="submit" value="Inloggen">
                                                   </form>
                                              </div>
                                         </div>

@@ -1,11 +1,34 @@
-<?php session_start(); 
+<?php session_start(); ?>
+<?php
+if(isset($_SESSION["product"]) && $_SESSION["product"] != ""){
+    $nm = $_SESSION["product"];
+    $mysqli= new MySQLi ("localhost","root","","guitarworld");
+if(mysqli_connect_errno()) {
+    trigger_error('Fout bij verbinding: '.$mysqli->error); 
+}
+    else{
+        $sql = "SELECT ProductNaam, ProductOmschrijving, ProductPrijs, ProductFoto FROM tblProducten WHERE ProductNaam = '".$nm."'";
+        if($stmt = $mysqli->prepare($sql)){
+            if(!$stmt->execute()){
+            echo 'Het uitvoeren van de query is mislukt: '.$stmt->error.' in query: '.$sql;
+            }
+            else{
+                $stmt->bind_result($naam, $omschrijving, $prijs, $foto);
+                $stmt->fetch();
+            }
+        }
+    }
+    $stmt->close();
+}
+else{
+    echo 'Er zit een fout in de query: '.$mysqli->error;
+}
 ?>
+
 <script type="text/javascript">
 
 function wijzig()
 {
-
-
 
    var ok = true;
 if (document.getElementById("naam").value=="Naam**" || document.getElementById("naam").value=="" ){
@@ -105,9 +128,9 @@ if(document.getElementById("postcode").value == ""){
 
 <!-- ADMIN INLOGGEN -->
     <?php
-    if((isset($_POST["submit"])) && $_POST['email'] == 'admin@mail.com' && $_POST['paswoord'] == 'admin123'){
-        header("location:admin.php");
+    if((isset($_POST["submit"])) && $_POST['email'] == 'admin@mail.com' && $_POST['paswoord'] == 'Admin123'){
         $_SESSION['ingelogged'] = 1;
+        header("location:admin.php");
     }
     ?>
 
@@ -215,8 +238,6 @@ if(document.getElementById("postcode").value == ""){
     <!--- KLANT INLOGGEN --->
     <?php
     if ((isset($_POST["submit"])) && (isset($_POST["email"])) && ($_POST["email"] != "") && isset($_POST['paswoord']) && ($_POST['paswoord'] != "")){
-        $mail = $_POST["email"];
-        $paswoord = $_POST["paswoord"];
 
         $mysqli= new MySQLi ("localhost","root","","guitarworld");
         if(mysqli_connect_errno()) {
@@ -224,16 +245,19 @@ if(document.getElementById("postcode").value == ""){
         }
         else{
 
-            $sql = 'SELECT KlantEmail, KlantPaswoord FROM tblKlanten WHERE KlantEmail = "'.$mail.'" AND KlantPaswoord = "'.$paswoord.'"';
+            $sql = 'SELECT KlantEmail FROM tblKlanten WHERE KlantEmail = ? AND KlantPaswoord = ?';
 
             if($stmt = $mysqli->prepare($sql)) {
+                $stmt->bind_param('ss',$mail,$paswoord);
+                $mail = $_POST["email"];
+                $paswoord = $_POST["paswoord"];
                 if(!$stmt->execute()){
                     ///echo 'Het uitvoeren van de query is mislukt: '.$stmt->error.' in query: '.$sql;
                 }
                 else {
-                    $stmt->bind_result($mail, $paswoord);
+                    $stmt->bind_result($mail_persoon);
                     while($stmt->fetch()) {
-                        $_SESSION['ingelogged'] = $mail;
+                       $_SESSION['ingelogged'] = $mail_persoon;
                     }
                 }
                 $stmt->close();
@@ -250,11 +274,8 @@ if(document.getElementById("postcode").value == ""){
 <html lang="en">
 <head>
 
-     <title>Contacten</title>
-<!-- 
-Hydro Template 
-http://www.templatemo.com/tm-509-hydro
--->
+     <title>GuitarWorld</title>
+
      <meta charset="UTF-8">
      <meta http-equiv="X-UA-Compatible" content="IE=Edge">
      <meta name="description" content="">
@@ -290,20 +311,20 @@ http://www.templatemo.com/tm-509-hydro
                          <span class="icon icon-bar"></span>
                     </button>
 
-                    <!-- lOGO TEXT HERE -->
-                    <a href="homepage.php" class="navbar-brand">GuitarWorld</a><img src="images/LOGO.png">
+                    <!-- LOGO TEXT -->
+                   <a href="homepage.php" class="navbar-brand"> GuitarWorld</a><img src="images/LOGO.png">
                </div>
 
                <!-- MENU LINKS -->
                <div class="collapse navbar-collapse">
                     <ul class="nav navbar-nav navbar-nav-first">
-                         <li><a href="homepage.php#home" class="smoothScroll">Home</a></li>
-                         <li><a href="info.php" class="smoothScroll">Over ons</a></li>
+                         <li><a href="#home" class="smoothScroll">Home</a></li>
+                        <li><a href="info.php" class="smoothScroll">Over ons</a></li>
                          <li><a href="gitaren.php" class="smoothScroll">Shop</a></li>
                         <li><img src="images/cart.png"></li>
                     </ul>
 
-                    <!-- IN OF UITLOGGEN -->
+                  <!-- IN OF UITLOGGEN -->
                    <?php if(isset($_SESSION['ingelogged'])) { ?>
                     <ul class="nav navbar-nav navbar-right">
                         <li><form  method="post" action="homepage.php" ><input type="submit" name="uitloggen" id="uitloggen" value="Uitloggen" class="section-btn"></form></li>
@@ -318,60 +339,79 @@ http://www.templatemo.com/tm-509-hydro
                    } 
                    ?>
                </div>
-
           </div>
      </section>
 
-     <!-- BLOG HEADER -->
-     <section id="blog-header" data-stellar-background-ratio="0.5">
+
+     <!-- HOME -->
+     <section id="home" data-stellar-background-ratio="0.5">
           <div class="overlay"></div>
           <div class="container">
                <div class="row">
 
-                    <div class="col-md-offset-1 col-md-5 col-sm-12">
-                         <h2>Contacten</h2>
+                    <div class="col-md-6 col-sm-12">
+                         <div class="home-info">
+                              <h1><b><?php echo $nm; ?></b></h1>
+                         </div>
                     </div>
-                    
+
+                    <div class="col-md-6 col-sm-12">
+                         <div class="home-video">
+                             <h1><b></b></h1>
+                         </div>
+                    </div>
+
                </div>
           </div>
      </section>
 
 
-     <!-- BLOG DETAIL -->
-     <section id="blog-detail" data-stellar-background-ratio="0.5">
+     <!-- PRODUCT -->
+     <section id="about" data-stellar-background-ratio="0.5">
           <div class="container">
                <div class="row">
 
-                    <div class="col-md-offset-1 col-md-10 col-sm-12">
-                         <!-- BLOG THUMB -->
-                         <!-- CONTACT FORM HERE -->
-                         <form id="contact-form" role="form" action="#" method="post">
-                              <div class="col-md-6 col-sm-6">
-                                   <input type="text" class="form-control" placeholder="Volledige naam" id="cf-name" name="cf-name" required="">
+                    <div class="col-md-5 col-sm-6">
+                         <div class="about-info">
+                              <div class="section-title">
                               </div>
-
-                              <div class="col-md-6 col-sm-6">
-                                   <input type="email" class="form-control" placeholder="Email" id="cf-email" name="cf-email" required=""><br>
-                              </div>
-
-                              <div class="col-md-6 col-sm-6">
-                                   <input type="tel" class="form-control" placeholder="gsm-nummer" id="cf-number" name="cf-number" required="">
-                              </div>
-
-                              <div class="col-md-12 col-sm-12">
-                                   <textarea class="form-control" rows="6" placeholder="Benodigdheden" id="cf-message" name="cf-message" required=""></textarea><br>
-                              </div>
-
-                              <div class="col-md-4 col-sm-12">
-                                   <input type="submit" class="form-control" name="submit" value="Verstuur">
-                              </div>
-
-                         </form>
+                              <table width=100% margin=20px>
+                                  <tr>
+                                      <td>
+                                          <?php echo "<img src='images/producten/".$foto."'>"; ?>
+                                      </td>
+                                      <td>
+                                          <b>
+                                              <?php echo "<h3>".$prijs."€</h3>"; ?>
+                                          </b>
+                                      </td>
+                                  </tr>
+                                  <tr>
+                                      <td>
+                                          <form method="post">
+                                              <input type="submit" id="toevoegen" class="toevoegen" value="Toevoegen aan winkelkarretje">
+                                          </form>
+                                      </td>
+                                      <td>
+                                          <b>
+                                              <?php echo $omschrijving; ?>
+                                        
+                                          </b>
+                                      </td>
+                                  </tr>
+                              </table>
+                         </div>
                     </div>
-                </div>  
-            </div>
-     </section>
 
+                    
+         </div>
+    </div>
+    </section>
+<div class="col-md-4 col-sm-12">
+                         <div class="about-image">
+                              <img src="images/about-image.jpg" class="img-responsive" alt="">
+                         </div>
+                    </div>
 
      <!-- FOOTER -->
      <footer data-stellar-background-ratio="0.5">
@@ -379,14 +419,14 @@ http://www.templatemo.com/tm-509-hydro
                <div class="row">
 
                     <div class="col-md-5 col-sm-12">
-                         <div class="footer-thumb footer-info"> 
+                         <div class="footer-thumb footer-info">
                               <h2>GuitarWorld</h2>
                               <p>Een wereld vol gitaren en accessiores voor iedereen.</p>
                          </div>
                     </div>
 
-                    <div class="col-md-2 col-sm-4"> 
-                         <div class="footer-thumb"> 
+                    <div class="col-md-2 col-sm-4">
+                         <div class="footer-thumb">
                               <h2>Bedrijf</h2>
                               <ul class="footer-link">
                                    <li><a href="info.php">Over ons</a></li>
@@ -395,13 +435,13 @@ http://www.templatemo.com/tm-509-hydro
                          </div>
                     </div>
 
-                    <div class="col-md-2 col-sm-4"> 
-                         <div class="footer-thumb"> 
+                    <div class="col-md-2 col-sm-4">
+                         <div class="footer-thumb">
                               <h2>Services</h2>
                               <ul class="footer-link">
                                    <li><a href="#">2de hands</a></li>
                                    <li><a href="#">Garantie</a></li>
-                                   <li><a href="#">Promotie's</a></li>
+                                   <li><a href="#">Promoties</a></li>
                               </ul>
                          </div>
                     </div>
@@ -409,18 +449,19 @@ http://www.templatemo.com/tm-509-hydro
                     <div class="col-md-12 col-sm-12">
                          <div class="footer-bottom">
                               <div class="col-md-6 col-sm-5">
-                                   <div class="copyright-text"> 
+                                   <div class="copyright-text">
                                         <p>Copyright &copy; 2019 GuitarWorld</p>
                                    </div>
                               </div>
                          </div>
                     </div>
-                    
+
                </div>
           </div>
      </footer>
 
-      <!-- MODAL -->
+
+     <!-- MODAL -->
      <section class="modal fade" id="modal-form" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
           <div class="modal-dialog modal-lg">
                <div class="modal-content modal-popup">
@@ -444,18 +485,28 @@ http://www.templatemo.com/tm-509-hydro
                                         <ul class="nav nav-tabs" role="tablist">
                                              <li class="active"><a href="#sign_up" aria-controls="sign_up" role="tab" data-toggle="tab">Maak een account</a></li>
                                              <li><a href="#sign_in" aria-controls="sign_in" role="tab" data-toggle="tab">Inloggen</a></li>
-                                        </ul>
+                                       </ul>
 
                                         <!-- TAB PANES -->
                                         <div class="tab-content">
                                              <div role="tabpanel" class="tab-pane fade in active" id="sign_up">
-                                                  <form action="#" method="post">
-                                                       <input type="text" class="form-control" name="naam" placeholder="Naam*" required>
-                                                       <input type="text" class="form-control" name="familienaam" placeholder="Familienaam*" required>
-                                                       <input type="email" class="form-control" name="email" placeholder="Email*" required>
-                                                       <input type="tel" class="form-control" name="gsm" placeholder="GSM">
-                                                       <input type="password" class="form-control" name="paswoord" placeholder="Paswoord*" required>
-                                                       <input type="submit" class="form-control" name="submit" value="Inloggen">
+                                                  <form action="homepage.php" method="post" name="accountmaken" id="accountmaken">
+                                                       <input type="text" class="form-control" name="naam" id="naam" placeholder="Naam*" >
+                                                       <label id="naamVerplicht" class="fout"></label>
+                                                       <input type="text" class="form-control" name="familienaam" id="familienaam" placeholder="Familienaam*" required>
+                                                       <label id="familienaamVerplicht" class="fout"></label>
+                                                       <input type="email" class="form-control" name="email" id="email" placeholder="Email*" required>
+                                                       <label id="emailVerplicht" class="fout"></label>
+                                                       <input type="tel" class="form-control" name="gsm" id="gsm" placeholder="GSM">
+                                                       <input type="password" class="form-control" name="paswoord" id="paswoord" placeholder="Paswoord*" required>
+                                                    <label id="paswoordControle" class="fout"></label><label id="paswoordVerplicht" class="fout"></label>
+                                                       <input type="password" class="form-control" name="paswoordConfirm" id="paswoordConfirm" placeholder="Paswoord bevestigen*" required>
+                                                      <label id="paswoordConfirmControle" class="fout"></label><label id="paswoordConfirmVerplicht" class="fout"></label>
+                                                       <input type="text" class="form-control" name="postcode" id="postcode" placeholder="Postcode*" required>
+                                                      <label id="postcodeVerplicht" class="fout"></label>
+                                                       <input type="text" class="form-control" name="gemeente" id="gemeente" placeholder="Gemeente*" required>
+                                                      <label id="gemeenteVerplicht" class="fout"></label>
+                                                       <input type="button" class="form-control" name="maken" id="maken" value=" Account Aanmaken" onclick="wijzig();">
                                                       <p>*Verplicht in te vullen</p>
                                                   </form>
                                              </div>
@@ -463,9 +514,8 @@ http://www.templatemo.com/tm-509-hydro
                                              <div role="tabpanel" class="tab-pane fade in" id="sign_in">
                                                   <form action="#" method="post">
                                                        <input type="email" class="form-control" name="email" placeholder="Email" required>
-                                                       <input type="password" class="form-control" name="paswoord" placeholder="Paswoord" required>
-                                                       <input type="submit" class="form-control" name="submit" value="Inloggen">
-                                                       <!-- link voor paswoord vergeten? bijplaatsen -->
+                                                       <input type="password" class="form-control" name="paswoord" placeholder="Paswoord"required>
+                                                       <input type="submit" class="form-control" name="submit" id="submit" value="Inloggen">
                                                   </form>
                                              </div>
                                         </div>
@@ -486,6 +536,8 @@ http://www.templatemo.com/tm-509-hydro
      <script src="js/jquery.magnific-popup.min.js"></script>
      <script src="js/smoothscroll.js"></script>
      <script src="js/custom.js"></script>
+
+
 
 </body>
 </html>

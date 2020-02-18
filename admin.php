@@ -1,3 +1,5 @@
+
+
 <?php session_start(); ?>
 
 
@@ -6,7 +8,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<style type=”text/css” >
+.opmaak {border:10px solid red; }
+table{
+    border:10px solid red;
 
+}
+</style>
      <title>Guitarworld</title>
 <!-- 
 Hydro Template 
@@ -55,32 +63,18 @@ http://www.templatemo.com/tm-509-hydro
                <div class="collapse navbar-collapse">
                     <ul class="nav navbar-nav navbar-nav-first">
                          <li><a href="homepage.php#home" class="smoothScroll">Home</a></li>
-                         <li><a href="homepage.php#about" class="smoothScroll">Over ons</a></li>
-                         <li><a href="homepage.php#contact" class="smoothScroll">Contact</a></li>
+                         <li><a href="gitaren.php" class="smoothScroll">Shop</a></li>
                     </ul>
 
-                    <!-- IN OF UITLOGGEN -->
-                   <?php
-                        if(isset($_SESSION['ingelogged'])) { ?>
-
-                    <ul class="nav navbar-nav navbar-right">
-                         <li><input type="button" name="uitloggen" id="uitloggen" value="Uitloggen" class="section-btn"> </li>
-                    </ul>
-
-                    <?php ; }
-                         else{ ?>
-
+                    <!-- UITLOGGEN -->
                         <ul class="nav navbar-nav navbar-right">
-                            <li><form method="post"><input type="button" name="inloggen" id="inloggen" value="Inloggen" class="section-btn" data-toggle="modal" data-target="#modal-form"></form></li>
+                            <li><form method="post"><input type="submit" name="uitloggen" id="uitloggen" value="Uitloggen" class="section-btn"></form></li>
                     </ul>
-
-
-                        <?php } 
-                   
+                   <?php
                    if(isset($_POST["uitloggen"])){
                        session_destroy();
+                       header("location:homepage.php");
                    } 
-                   
                    ?>
                </div>
 
@@ -107,17 +101,18 @@ http://www.templatemo.com/tm-509-hydro
     <section id="blog-detail" data-stellar-background-ratio="0.5">
           <div class="container">
                <div class="row">
-
-                    <div class="col-md-offset-1 col-md-10 col-sm-12">
+                   <div class="col-md-offset-1 col-md-10 col-sm-12">
                         <div class="section-title">
-                            <h2>Klanten zoeken en wijzigen</h2>
+                            
                             <span class="line-bar">...</span>
                         </div>
-                        
 
-<!-- FORM KLANTEN -->
+                       <table   width=100%  >
+                           <tr><td style="border: 3px solid black; margin: 20px; padding: 20px">
+                               <h2>Klanten zoeken en wijzigen</h2>
+                                <p>Zoeken en wijzigen van klanten en hun gegevens.</p>
  <form id="form1" name="form1" method="post">
- <p>Zoeken en wijzigen van klanten en hun gegevens.</p>
+
      <table>
          <tr><td>
  Klantnummer:
@@ -151,6 +146,65 @@ GSM:
              </td></tr>
      </table>
 </form>
+                               </td>
+                           
+                           <td  style="border: 3px solid black; margin: 20px; padding: 20px">
+                                <h2>Producten zoeken en wijzigen</h2>
+                                <p>Zoeken en wijzigen van Producten en hun gegevens.</p>
+<form id="form1" name="form1" method="post">
+    
+   
+                           <table>
+            <tr><td>
+    ProductId:
+                </td><td>
+    <input type="text" name="id" id="id" placeholder="ProductId">
+                </td></tr>
+            <tr><td>
+                Naam:
+                </td><td>
+    <input type="text" name="naam" id="naam" placeholder="naam" />
+                </td></tr>
+                               <tr>
+                               <td>
+                                   
+                                    &nbsp;
+                                   
+                                   </td>
+                               </tr>
+                               <tr>
+                               <td>
+                                   
+                                    &nbsp;
+                                   
+                                   </td>
+                               </tr>
+                <tr><td>
+    <input type="submit" name="verzenden2" id="verzenden2" value="Zoeken" />
+                    </td><td>
+    <input type="reset" name="wissen" id="wissen" value="wissen" />
+                    </td></tr>
+        </table>
+                       
+</form>
+   <form method="post" action="toevoegen.php"><input type="submit" value="Toevoegen"></form>
+                               
+                               
+                               
+                               
+                               
+                               
+                               
+                               
+                               </td>
+                           
+                           
+                           
+                           
+                           
+                           </tr>                     
+                        
+    </table>                    
                         
                         <!-- TONEN -->
 <?php
@@ -170,7 +224,11 @@ GSM:
                         else{
                             $stmt->bind_result($klantnr, $klantnaam, $klantfamilienaam, $klantemail, $klantgsm, $klantpaswoord, $postid);
                             while($stmt->fetch()){
-                                echo $klantnr.'-'.$klantnaam.'-'.$klantfamilienaam.'-'.$klantemail.'-'.$klantgsm.'-'.$klantpaswoord.'-'.$postid.'<form method="post" action="wijzigK.php"><input type="submit" naam="zoekk" id="zoekk" value="wijzig"></form>';
+                                echo '<br><br><table border="2" width=100%>
+                            <tr><th>Klantnummer</th><th>Naam</th><th>Familienaam</th><th>Email</th><th>GSM</th><th>Paswoord</th><th>Postcode</th><th>Wijzigen</th></tr>
+                            <tr><td>'.$klantnr.'</td><td>'.$klantnaam.'</td><td>'.$klantfamilienaam.'</td><td>'.$klantemail.'</td><td>'.$klantgsm.'</td><td>'.$klantpaswoord.'</td><td>'.$postid.'</td><td><a href="wijzigk.php">Wijzig</a></tr>
+                            </table>';
+                            $_SESSION["id"] = $klantnr;
                             }
                         }
                         $stmt->close();
@@ -195,7 +253,11 @@ GSM:
                             else{
                                 $stmt->bind_result($klantnr, $klantnaam, $klantfamilienaam, $klantemail, $klantgsm, $klantpaswoord, $postid);
                                 while($stmt->fetch()){
-                                    echo $klantnr.'-'.$klantnaam.'-'.$klantfamilienaam.'-'.$klantemail.'-'.$klantgsm.'-'.$klantpaswoord.'-'.$postid.'<form method="post" action="wijzigK.php"><input type="submit" naam="zoekk" id="zoekk" value="wijzig"></form>';
+                                    echo '<br><br><table border="2" width=100%>
+                            <tr><th>Klantnummer</th><th>Naam</th><th>Familienaam</th><th>Email</th><th>GSM</th><th>Paswoord</th><th>Postcode</th><th>Wijzigen</th></tr>
+                            <tr><td>'.$klantnr.'</td><td>'.$klantnaam.'</td><td>'.$klantfamilienaam.'</td><td>'.$klantemail.'</td><td>'.$klantgsm.'</td><td>'.$klantpaswoord.'</td><td>'.$postid.'</td><td><a href="wijzigk.php">Wijzig</a></tr>
+                            </table>';
+                            $_SESSION["id"] = $klantnr;
                                 }
                             }
                             $stmt->close();
@@ -220,7 +282,11 @@ GSM:
                             else{
                                 $stmt->bind_result($klantnr, $klantnaam, $klantfamilienaam, $klantemail, $klantgsm, $klantpaswoord, $postid);
                                 while($stmt->fetch()){
-                                    echo $klantnr.'-'.$klantnaam.'-'.$klantfamilienaam.'-'.$klantemail.'-'.$klantgsm.'-'.$klantpaswoord.'-'.$postid.'<form method="post" action="wijzig.phpK"><input type="submit" naam="zoekk" id="zoekk" value="wijzig"></form>';
+                                    echo '<br><br><table border="2" width=100%>
+                            <tr><th>Klantnummer</th><th>Naam</th><th>Familienaam</th><th>Email</th><th>GSM</th><th>Paswoord</th><th>Postcode</th><th>Wijzigen</th></tr>
+                            <tr><td>'.$klantnr.'</td><td>'.$klantnaam.'</td><td>'.$klantfamilienaam.'</td><td>'.$klantemail.'</td><td>'.$klantgsm.'</td><td>'.$klantpaswoord.'</td><td>'.$postid.'</td><td><a href="wijzigk.php">Wijzig</a></tr>
+                            </table>';
+                            $_SESSION["id"] = $klantnr;
                                 }
                             }
                             $stmt->close();
@@ -245,7 +311,11 @@ GSM:
                             else{
                                 $stmt->bind_result($klantnr, $klantnaam, $klantfamilienaam, $klantemail, $klantgsm, $klantpaswoord, $postid);
                                 while($stmt->fetch()){
-                                    echo $klantnr.'-'.$klantnaam.'-'.$klantfamilienaam.'-'.$klantemail.'-'.$klantgsm.'-'.$klantpaswoord.'-'.$postid.'<form method="post" action="wijzigK.php"><input type="submit" naam="zoekk" id="zoekk" value="wijzig"></form>';
+                                    echo '<br><br><table border="2" width=100%>
+                            <tr><th>Klantnummer</th><th>Naam</th><th>Familienaam</th><th>Email</th><th>GSM</th><th>Paswoord</th><th>Postcode</th><th>Wijzigen</th></tr>
+                            <tr><td>'.$klantnr.'</td><td>'.$klantnaam.'</td><td>'.$klantfamilienaam.'</td><td>'.$klantemail.'</td><td>'.$klantgsm.'</td><td>'.$klantpaswoord.'</td><td>'.$postid.'</td><td><a href="wijzigk.php">Wijzig</a></tr>
+                            </table>';
+                            $_SESSION["id"] = $klantnr;
                                 }
                             }
                             $stmt->close();
@@ -270,7 +340,11 @@ GSM:
                             else{
                                 $stmt->bind_result($klantnr, $klantnaam, $klantfamilienaam, $klantemail, $klantgsm, $klantpaswoord, $postid);
                                 while($stmt->fetch()){
-                                    echo $klantnr.'-'.$klantnaam.'-'.$klantfamilienaam.'-'.$klantemail.'-'.$klantgsm.'-'.$klantpaswoord.'-'.$postid.'<form method="post" action="wijzigK.php"><input type="submit" naam="zoekk" id="zoekk" value="wijzig"></form>';
+                                    echo '<br><br><table border="2" width=100%>
+                            <tr><th>Klantnummer</th><th>Naam</th><th>Familienaam</th><th>Email</th><th>GSM</th><th>Paswoord</th><th>Postcode</th><th>Wijzigen</th></tr>
+                            <tr><td>'.$klantnr.'</td><td>'.$klantnaam.'</td><td>'.$klantfamilienaam.'</td><td>'.$klantemail.'</td><td>'.$klantgsm.'</td><td>'.$klantpaswoord.'</td><td>'.$postid.'</td><td><a href="wijzigk.php">Wijzig</a></tr>
+                            </table>';
+                            $_SESSION["id"] = $klantnr;
                                 }
                             }
                             $stmt->close();
@@ -283,40 +357,8 @@ GSM:
         }
                         
 ?>
-                   </div>
-                   
-                   
-                   
-                   <br><br><br><br>
-                   
-                   
-                   
-                   <div class="col-md-offset-1 col-md-10 col-sm-12">
-                        <div class="section-title">
-                            <h2>Producten zoeken en wijzigen</h2>
-                            <span class="line-bar">...</span>
-                        </div>
-<form id="form1" name="form1" method="post">
-    <p>Zoeken en wijzigen van Producten en hun gegevens.</p>
-                           <table>
-            <tr><td>
-    ProductId:
-                </td><td>
-    <input type="text" name="id" id="id" placeholder="ProductId">
-                </td></tr>
-            <tr><td>
-                Naam:
-                </td><td>
-    <input type="text" name="naam" id="naam" placeholder="naam" />
-                </td></tr>
-                <tr><td>
-    <input type="submit" name="verzenden2" id="verzenden2" value="Zoeken" />
-                    </td><td>
-    <input type="reset" name="wissen" id="wissen" value="wissen" />
-                    </td></tr>
-        </table>
                        
-</form>
+
 <?php
         if(isset($_POST["verzenden2"])){
             if(isset($_POST["id"]) && $_POST["id"] != ""){
@@ -334,7 +376,11 @@ GSM:
                         else{
                             $stmt->bind_result($productnr, $productnaam, $productomschrijving, $productprijs);
                             while($stmt->fetch()){
-                                echo "<table><tr><td> ProductId: ".$productnr.'</td></tr><tr><td>Naam: "'.$productnaam.'"</td></tr><tr><td>Omschrijving: "'.$productomschrijving.'"</td></tr><tr><td>Prijs: '.$productprijs.'</td></tr></table><form method="post" action="wijzigp.php"><input type="submit" name="zoekp" id="zoekp" value"wijzig"></form>';
+                                echo '<br> <br><table border="2" width=100%>
+                           <tr><th>Productnummer</th><th>Productnaam</th><th>Productomschrijving</th><th>Productprijs</th><th>Wijzigen</th></tr>
+                           <tr><td>'.$productnr.'</td><td>'.$productnaam.'</td><td>'.$productomschrijving.'</td><td>'.$productprijs.'</td><td><a href="wijzigp.php">Wijzigen</a></td></tr>
+                           </table>';
+                                $_SESSION["id"] = $_POST["id"];
                             }
                         }
                         $stmt->close();
@@ -351,7 +397,7 @@ GSM:
                     trigger_error('Fout bij de verbinding: '.$mysqli->error);
                 }
                 else{
-                    $sql = "select ProductId, ProductNaam, ProductOmschrijving, ProductPrijs from tblProducten where ProductId ='".$naam."'";
+                    $sql = "select ProductId, ProductNaam, ProductOmschrijving, ProductPrijs from tblProducten where ProductNaam ='".$naam."'";
                     if($stmt = $mysqli->prepare($sql)){
                         if(!$stmt->execute()){
                             echo 'Het uitvoeren van de query is mislukt: '.$stmt->error.' in query: '.$sql;
@@ -359,7 +405,11 @@ GSM:
                         else{
                             $stmt->bind_result($productnr, $productnaam, $productomschrijving, $productprijs);
                             while($stmt->fetch()){
-                                echo "<table><tr><td> ProductId: ".$productnr.'</td></tr><tr><td>Naam: "'.$productnaam.'"</td></tr><tr><td>Omschrijving: "'.$productomschrijving.'"</td></tr><tr><td>Prijs: '.$productprijs.'</td></tr></table><form method="post" action="wijzigp.php"><input type="submit" name="zoekp" id="zoekp" value"wijzig"></form>';
+                                echo '<br><br><table border="2" width=100%>
+                           <tr><th>Productnummer</th><th>Productnaam</th><th>Productomschrijving</th><th>Productprijs</th><th>Wijzigen</th></tr>
+                           <tr><td>'.$productnr.'</td><td>'.$productnaam.'</td><td>'.$productomschrijving.'</td><td>'.$productprijs.'</td><td><a href="wijzigp.php">Wijzigen</a></td></tr>
+                           </table>';
+                                $_SESSION["id"] = $_POST["id"];
                             }
                         }
                         $stmt->close();
@@ -371,13 +421,15 @@ GSM:
             }
         }
 ?>
-                       <form method="post" action="toevoegen.php"><input type="submit" value="Toevoegen"></form>
+                        </div>
                    </div>
               </div>
-        </div>
+      
     </section>
-
-
+             
+<div></div>
+    <div></div>
+    
      <!-- FOOTER -->
      <footer data-stellar-background-ratio="0.5">
           <div class="container">

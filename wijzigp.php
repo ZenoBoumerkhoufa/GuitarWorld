@@ -1,4 +1,81 @@
 <?php session_start(); ?>
+<?php                        
+                        
+    if(isset($_SESSION["id"])){
+      $id = $_SESSION["id"];                   
+                        
+        if(isset($_POST["verzenden"])){
+            if(isset($_POST["naam"]) && isset($_POST["invoer"]) && $_POST["invoer"] != ""){
+                    $mysqli = new MYSQLi ("localhost","root","","guitarworld");
+                    if(mysqli_connect_errno()){
+                        trigger_error('Fout bij de verbinding: '.$mysqli->error);
+                    }
+                    else{
+                        $sql = "UPDATE tblKlanten SET KlantNaam =? WHERE KlantNr = ".$id;
+                        if($stmt = $mysqli->prepare($sql)){
+                               $stmt->bind_param("s", $kf);
+                            $kf = $_POST["invoer"];
+                            if(!$stmt->execute()){
+                                echo 'Het uitvoeren van de query is mislukt: '.$stmt->error.' in query: '.$sql;
+                            }
+                            else{
+                               
+                            }
+                            $stmt->close();
+                        }
+                        else{
+                            echo 'Er zit een fout in de query: '.$mysqli->error;
+                        }
+                    }
+                }
+            else if(isset($_POST["omschrijving"]) && isset($_POST["invoer"]) && $_POST["invoer"] != ""){
+                    $mysqli = new MYSQLi ("localhost","root","","guitarworld");
+                    if(mysqli_connect_errno()){
+                        trigger_error('Fout bij de verbinding: '.$mysqli->error);
+                    }
+                    else{
+                        $sql = "UPDATE tblproducten SET ProductOmschrijving = ? WHERE ProductId = ".$id;
+                        if($stmt = $mysqli->prepare($sql)){
+                            $stmt->bind_param("s", $kf);
+                            $kf = $_POST["invoer"];
+                            if(!$stmt->execute()){
+                                echo 'Het uitvoeren van de query is mislukt: '.$stmt->error.' in query: '.$sql;
+                            }
+                            else{
+                                
+                            }
+                            $stmt->close();
+                        }
+                        else{
+                            echo 'Er zit een fout in de query: '.$mysqli->error;
+                        }
+                    }
+                }
+            else if(isset($_POST["prijs"]) && isset($_POST["invoer"]) && $_POST["invoer"] != ""){
+                    $mysqli = new MYSQLi ("localhost","root","","guitarworld");
+                    if(mysqli_connect_errno()){
+                        trigger_error('Fout bij de verbinding: '.$mysqli->error);
+                    }
+                    else{
+                        $sql = "UPDATE tblproducten SET ProductPrijs = ? WHERE ProductId =".$id;
+                        if($stmt = $mysqli->prepare($sql)){
+                            if(!$stmt->execute()){
+                                echo 'Het uitvoeren van de query is mislukt: '.$stmt->error.' in query: '.$sql;
+                            }
+                            else{
+                                
+                            }
+                            $stmt->close();
+                        }
+                        else{
+                            echo 'Er zit een fout in de query: '.$mysqli->error;
+                        }
+                    }
+                }
+        }
+     }
+                        
+?>
 
 
 
@@ -55,35 +132,19 @@ http://www.templatemo.com/tm-509-hydro
                <div class="collapse navbar-collapse">
                     <ul class="nav navbar-nav navbar-nav-first">
                          <li><a href="homepage.php#home" class="smoothScroll">Home</a></li>
-                         <li><a href="homepage.php#about" class="smoothScroll">Over ons</a></li>
-                         <li><a href="homepage.php#contact" class="smoothScroll">Contact</a></li>
+                        <li><a href="gitaren.php" class="smoothScroll">Shop</a></li>
                     </ul>
 
-                    <!-- IN OF UITLOGGEN -->
-                   <?php
-                        if(isset($_SESSION['ingelogged'])) { ?>
-
-                    <ul class="nav navbar-nav navbar-right">
-                         <li><input type="button" name="uitloggen" id="uitloggen" value="Uitloggen" class="section-btn"> </li>
-                    </ul>
-
-                    <?php ; }
-                         else{ ?>
-
+                    <!-- UITLOGGEN -->
                         <ul class="nav navbar-nav navbar-right">
-                            <li><form method="post"><input type="button" name="inloggen" id="inloggen" value="Inloggen" class="section-btn" data-toggle="modal" data-target="#modal-form"></form></li>
+                            <li><form method="post"><input type="submit" name="uitloggen" id="uitloggen" value="Terug" class="section-btn"></form></li>
                     </ul>
-
-
-                        <?php } 
-                   
+                   <?php
                    if(isset($_POST["uitloggen"])){
-                       session_destroy();
+                       header("location:admin.php");
                    } 
-                   
                    ?>
                </div>
-
           </div>
      </section>
 
@@ -110,111 +171,64 @@ http://www.templatemo.com/tm-509-hydro
 
                     <div class="col-md-offset-1 col-md-10 col-sm-12">
                         <div class="section-title">
-                            <h2>Klanten zoeken en wijzigen</h2>
+                            <h2>Producten wijzigen</h2>
                             <span class="line-bar">...</span>
                         </div>
                         
-
-<!-- FORM KLANTEN -->
- <form id="form1" name="form1" method="post">
- <p>Wijzigen van klanten en hun gegevens.</p>
-     <table>
-         <tr><td>
-Naam:
-             </td><td>
- <input type="text" name="naam" id="naam" placeholder="naam" />
-             </td></tr>
-         <tr><td>
-Omschrijving:
-             </td><td>
- <input type="text" name="omschrijving" id="omschrijving" placeholder="omschrijving">
-             </td></tr>
-         <tr><td>
-Prijs:
-             </td><td>
- <input type="prijs" name="prijs" id="prijs" placeholder="prijs" />
-             </td></tr>
-             <tr><td>
- <input type="submit" name="verzenden" id="verzenden" value="wijzigen" />
-             </td></tr>
-     </table>
-</form>
+                        <!-- VALUE'S -->                        
                         
-                        <!-- TONEN -->
 <?php
-        if(isset($_POST["verzenden"])){
-            if(isset($_POST["naam"]) && $_POST["naam"] != ""){
-                    $naam = $_POST["naam"];
-                    $mysqli = new MYSQLi ("localhost","root","","guitarworld");
-                    if(mysqli_connect_errno()){
-                        trigger_error('Fout bij de verbinding: '.$mysqli->error);
-                    }
-                    else{
-                        $sql = "UPDATE ProductNaam from tblproducten where ProductNaam = '".$naam."'";
-                        if($stmt = $mysqli->prepare($sql)){
-                            if(!$stmt->execute()){
-                                echo 'Het uitvoeren van de query is mislukt: '.$stmt->error.' in query: '.$sql;
-                            }
-                            else{
-                                $stmt->bind_param("s", $knaam);
-                                $knaam = $mysqli->real_escape_string($naam);
-                            }
-                            $stmt->close();
-                        }
-                        else{
-                            echo 'Er zit een fout in de query: '.$mysqli->error;
-                        }
-                    }
+        if(isset($_SESSION["id"]) && $_SESSION["id"] != ""){
+            $nr = $_SESSION["id"];
+                        
+                $mysqli = new MYSQLi ("localhost","root","","guitarworld");
+                if(mysqli_connect_errno()){
+                    trigger_error('Fout bij de verbinding: '.$mysqli->error);
                 }
-            else if(isset($_POST["omschrijving"]) && $_POST["omschrijving"] != ""){
-                    $omschrijving = $_POST["omschrijving"];
-                    $mysqli = new MYSQLi ("localhost","root","","guitarworld");
-                    if(mysqli_connect_errno()){
-                        trigger_error('Fout bij de verbinding: '.$mysqli->error);
-                    }
-                    else{
-                        $sql = "UPDATE ProductOmschrijving from tblproducten where ProductOmschrijving = '".$omschrijving."'";
-                        if($stmt = $mysqli->prepare($sql)){
-                            if(!$stmt->execute()){
-                                echo 'Het uitvoeren van de query is mislukt: '.$stmt->error.' in query: '.$sql;
-                            }
-                            else{
-                                $stmt->bind_param("s", $omsch);
-                                $omsch = $mysqli->real_escape_string($kf);
-                            }
-                            $stmt->close();
+                else{
+                    $sql = "select ProductId, ProductNaam, ProductOmschrijving, ProductPrijs from tblProducten where ProductId = ". $nr ;
+                    if($stmt = $mysqli->prepare($sql)){
+                        if(!$stmt->execute()){
+                            echo "Het uitvoeren van de query is mislukt: ".$stmt->error." in de query: ".$sql;
                         }
                         else{
-                            echo 'Er zit een fout in de query: '.$mysqli->error;
-                        }
-                    }
-                }
-            else if(isset($_POST["prijs"]) && $_POST["prijs"] != ""){
-                    $prijs = $_POST["prijs"];
-                    $mysqli = new MYSQLi ("localhost","root","","guitarworld");
-                    if(mysqli_connect_errno()){
-                        trigger_error('Fout bij de verbinding: '.$mysqli->error);
-                    }
-                    else{
-                        $sql = "UPDATE ProductPrijs from tblproducten where ProductPrijs ='".$prijs."'";
-                        if($stmt = $mysqli->prepare($sql)){
-                            if(!$stmt->execute()){
-                                echo 'Het uitvoeren van de query is mislukt: '.$stmt->error.' in query: '.$sql;
-                            }
-                            else{
-                                $stmt->bind_param("s", $p);
-                                $p = $mysqli->real_escape_string($m);
-                            }
-                            $stmt->close();
-                        }
-                        else{
-                            echo 'Er zit een fout in de query: '.$mysqli->error;
+                            $stmt->bind_result($id, $naam, $omschrijving, $prijs);
+                            $stmt->fetch();
                         }
                     }
                 }
         }
+                            ?>
                         
-?>
+                        <table border="2">
+                            <tr><th>ProductId</th><th>ProductNaam</th><th>ProductOmschrijving</th><th>ProductPrijs</th></tr>
+                            <tr><td><?php echo $id; ?></td><td><?php echo $naam; ?></td><td><?php echo $omschrijving; ?></td><td><?php echo $prijs; ?></td></tr>
+                        </table>
+                        
+
+<!-- FORM PRODUCTEN -->
+ <form id="form1" name="form1" method="post">
+     <table>
+         <tr><td>
+Te wijzigen:
+         
+ <input type="radio" name="naam" id="naam" />Naam
+         
+ <input type="radio" name="familienaam" id="familienaam"/>Omschrijving
+         
+ <input type="radio" name="email" id="email"/>Prijs
+             
+         </td></tr>
+         
+         <tr><td><input type="text" name="invoer" id="invoer" /></td></tr>
+         
+         <tr><td>
+ <input type="submit" name="verzenden" id="verzenden" value="wijzigen" />
+             
+ <input type="reset" name="wissen" id="wissen" value="wissen" />
+         </td></tr>
+     </table>
+</form> 
                    </div>
               </div>
         </div>
