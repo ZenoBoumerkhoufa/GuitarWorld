@@ -63,8 +63,7 @@ http://www.templatemo.com/tm-509-hydro
                <div class="collapse navbar-collapse">
                     <ul class="nav navbar-nav navbar-nav-first">
                          <li><a href="homepage.php#home" class="smoothScroll">Home</a></li>
-                         <li><a href="homepage.php#about" class="smoothScroll">Over ons</a></li>
-                         <li><a href="homepage.php#contact" class="smoothScroll">Contact</a></li>
+                         <li><a href="gitaren.php" class="smoothScroll">Shop</a></li>
                     </ul>
 
                     <!-- UITLOGGEN -->

@@ -1,4 +1,7 @@
-<?php session_start(); ?>
+<?php session_start();
+if(! isset($_SESSION["count"])){
+    $_SESSION["count"] = 0;
+}?>
 <script type="text/javascript">
 
 function wijzig()
@@ -298,13 +301,14 @@ http://www.templatemo.com/tm-509-hydro
                     <ul class="nav navbar-nav navbar-nav-first">
                          <li><a href="homepage.php#home" class="smoothScroll">Home</a></li>
                          <li><a href="homepage.php#about" class="smoothScroll">Over ons</a></li>
-                         <li><a href="homepage.php#contact" class="smoothScroll">Contact</a></li>
+                         <li><a href="gitaren.php" class="smoothScroll">Shop</a></li>
+                        <li><a href="Winkelwagentje.php"><img src="images/cart.png"></a></li>
                     </ul>
 
                      <!-- IN OF UITLOGGEN -->
                    <?php if(isset($_SESSION['ingelogged'])) { ?>
                     <ul class="nav navbar-nav navbar-right">
-                        <li><form method="post"><input type="submit" name="uitloggen" id="uitloggen" value="Uitloggen" class="section-btn"></form></li>
+                        <li><form  method="post" action="homepage.php" ><input type="submit" name="uitloggen" id="uitloggen" value="Uitloggen" class="section-btn"></form></li>
                     </ul>
                     <?php } else{ ?>
                     <ul class="nav navbar-nav navbar-right">
@@ -313,7 +317,6 @@ http://www.templatemo.com/tm-509-hydro
                    <?php }
                    if(isset($_POST["uitloggen"])){
                        session_destroy();
-                       header("location:homepage.php");
                    } 
                    ?>
                </div>
@@ -343,34 +346,59 @@ http://www.templatemo.com/tm-509-hydro
                <div class="row">
                     <div class="col-md-offset-1 col-md-10 col-sm-12">
                         <div class="col-md-3 col-sm-6">
-                                 
-                                 
-                                 
-   <!-- PRINTEN -->
-                            <table width=80% margin=10 padding=10>
-                                <tr>
-    <?php
-    $mysqli= new MySQLi ("localhost","root","","guitarworld");
+                            
+                            <!---ZOEKBALK--->
+                            
+                            <form method="post">
+                            <input id="artikelzoeken" type="search" name="artikelzoeken" value="" placeholder="Zoeken naar...." autocomplete="off">
+                            </form>
+                            
+                            <table width=80% margin=10 padding=10><tr class="tabel" id="tabel" height="150" >
+                            
+                            <?php
+                            
+                            if(isset($_POST["artikelzoeken"])){
+                                $zoek1 = $_POST["artikelzoeken"];
+                            }else
+                            {
+                                $zoek1 = "%";
+                            }
+                                
+                             $mysqli= new MySQLi ("localhost","root","","guitarworld");
 if(mysqli_connect_errno()) {
     trigger_error('Fout bij verbinding: '.$mysqli->error); 
 }
     else{
-        $sql = "SELECT ProductNaam, ProductOmschrijving, ProductPrijs, ProductFoto FROM tblProducten";
+        $sql = "SELECT ProductId, ProductNaam, ProductOmschrijving, ProductPrijs, ProductFoto FROM tblProducten WHERE ProductNaam LIKE ?";
         if($stmt = $mysqli->prepare($sql)){
+            $stmt->bind_param("s",$zoek);
+            $zoek = "%".$zoek1."%";
             if(!$stmt->execute()){
             echo 'Het uitvoeren van de query is mislukt: '.$stmt->error.' in query: '.$sql;
             }
             else{
-                $stmt->bind_result($naam, $omschrijving, $prijs, $foto);
+                $stmt->bind_result($productid, $naam, $omschrijving, $prijs, $foto);
                 $a = 1;
-                while($stmt->fetch()){
-                    echo "<td><a href='product.php'>
-                    <img src='images/producten/".$foto."' alt='".$naam."'>
-                    <div><h3>'".$naam."'</h3><br>".$omschrijving."<br><h3>".$prijs."€</h3></div>
-                    </div></a></td>";
-                    $_SESSION["product"] = $naam;
-                    if($a % 4 == 0){
-                        echo "</tr><tr>";
+                while($stmt->fetch()){ echo  '              
+                                <form action="product.php?" method="post">
+    <div class="row">
+      <div class="col-md-7">
+      <td><h3>'.$naam.'</h3>
+        <a href="product.php?actie=doogaan&productid='.$productid.'">
+          <img class="fotos" src="images/producten/'.$foto.'" alt="foto" >
+      </div>
+      <div class="col-md-5">
+              <h4>'.$prijs.'€</h4>
+              <p>'.$omschrijving.'</p>
+              </a>
+        <a class="btn btn-primary" href="product.php?productid='.$productid.'">Bekijk product</a></td>
+      </div>
+    </div>
+ </form>';
+                                
+                    
+                    if($a % 3 == 0){
+                        echo "</tr><tr class='tabel' id='tabel'>";
                     }
                     $a++;
                 }
@@ -381,9 +409,8 @@ if(mysqli_connect_errno()) {
             echo 'Er zit een fout in de query: '.$mysqli->error;
         }
     }
-?>
-                                </tr>
-                                </table>
+                                ?>
+                            </table>
                         </div>
                     </div>
                </div>

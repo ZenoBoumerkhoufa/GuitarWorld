@@ -52,6 +52,7 @@
                     }
                 }
             else if(isset($_POST["prijs"]) && isset($_POST["invoer"]) && $_POST["invoer"] != ""){
+                if(is_int($_POST["invoer"])){
                     $mysqli = new MYSQLi ("localhost","root","","guitarworld");
                     if(mysqli_connect_errno()){
                         trigger_error('Fout bij de verbinding: '.$mysqli->error);
@@ -72,9 +73,12 @@
                         }
                     }
                 }
+                else{
+                    ?><script type="text/javascript"> Document.getElementById("warning").innerHTML = "Gelieve een getal in te voeren als prijs"; </script><?php
+                }
         }
      }
-                        
+    }                        
 ?>
 
 
@@ -132,8 +136,7 @@ http://www.templatemo.com/tm-509-hydro
                <div class="collapse navbar-collapse">
                     <ul class="nav navbar-nav navbar-nav-first">
                          <li><a href="homepage.php#home" class="smoothScroll">Home</a></li>
-                         <li><a href="homepage.php#about" class="smoothScroll">Over ons</a></li>
-                         <li><a href="homepage.php#contact" class="smoothScroll">Contact</a></li>
+                        <li><a href="gitaren.php" class="smoothScroll">Shop</a></li>
                     </ul>
 
                     <!-- UITLOGGEN -->
@@ -221,7 +224,7 @@ Te wijzigen:
              
          </td></tr>
          
-         <tr><td><input type="text" name="invoer" id="invoer" /></td></tr>
+         <tr><td><input type="text" name="invoer" id="invoer" /></td><td><label name="warning" id="warning"></label></td></tr>
          
          <tr><td>
  <input type="submit" name="verzenden" id="verzenden" value="wijzigen" />

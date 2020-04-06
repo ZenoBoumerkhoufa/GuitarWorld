@@ -1,43 +1,10 @@
 <?php session_start(); ?>
 
-<?php
-        if(isset($_POST["toevoegen"]) && is_int($_POST["prijs"])){
-             $mysqli = new MYSQLi ("localhost","root","","guitarworld");
-                if(mysqli_connect_errno()){
-                    trigger_error('Fout bij de verbinding: '.$mysqli->error);
-                }
-                else{
-                  
-                    
-                    
-                    $sql = "INSERT INTO tblproducten (ProductNaam, ProductOmschrijving, ProductPrijs, ProductFoto) VALUES (?, ?, ?,?)";
-                      if($stmt = $mysqli->prepare($sql)){   
-                           $stmt->bind_param("ssis",$naam,$omschrijving,$prijs,$foto);
-                        $naam = $mysqli->real_escape_string($_POST["naam"]);
-                        $omschrijving = $mysqli->real_escape_string($_POST["omschrijving"]);
-                        $prijs = $mysqli->real_escape_string($_POST["prijs"]);
-                        $foto = $mysqli->real_escape_string($_POST["foto"]); 
-                        if(!$stmt->execute()){
-                            echo "werkt niet: ".$stmt->error." in query: ".$sql;
-                        }
-                        else{
-                            $mededeling = "Product succesvol toegevoegd";
-                        }
-                   
-                        $stmt->close();}
-                      }         
-        }
-else{
-    ?><script type="text/javascript"> Document.getElementById("warning").innerHTML = "Gelieve een getal in te voeren als prijs"; </script><?php
-}
-?>
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
 
-     <title>Guitarworld</title>
+     <title>Contacten</title>
 <!-- 
 Hydro Template 
 http://www.templatemo.com/tm-509-hydro
@@ -86,19 +53,24 @@ http://www.templatemo.com/tm-509-hydro
                     <ul class="nav navbar-nav navbar-nav-first">
                          <li><a href="homepage.php#home" class="smoothScroll">Home</a></li>
                          <li><a href="homepage.php#about" class="smoothScroll">Over ons</a></li>
-                         <li><a href="homepage.php#contact" class="smoothScroll">Contact</a></li>
+                         <li><a href="gitaren.php" class="smoothScroll">Shop</a></li>
+                        <li><img src="images/cart.png"></li>
                     </ul>
 
-                    <!-- UITLOGGEN -->
-                        <ul class="nav navbar-nav navbar-right">
-                            <li><form method="post"><input type="submit" name="uitloggen" id="uitloggen" value="Terug" class="section-btn"></form></li>
+                    <!-- IN OF UITLOGGEN -->
+                   <?php if(isset($_SESSION['ingelogged'])) { ?>
+                    <ul class="nav navbar-nav navbar-right">
+                        <li><form  method="post" action="homepage.php" ><input type="submit" name="uitloggen" id="uitloggen" value="Uitloggen" class="section-btn"></form></li>
                     </ul>
-                   <?php
+                    <?php } else{ ?>
+                    <ul class="nav navbar-nav navbar-right">
+                         <li class="section-btn"><a href="#" data-toggle="modal" data-target="#modal-form">Inloggen</a></li>
+                    </ul>
+                   <?php }
                    if(isset($_POST["uitloggen"])){
-                       header("location:admin.php");
+                       session_destroy();
                    } 
                    ?>
-                   
                </div>
 
           </div>
@@ -112,7 +84,7 @@ http://www.templatemo.com/tm-509-hydro
                <div class="row">
 
                     <div class="col-md-offset-1 col-md-5 col-sm-12">
-                         <h2>Admin</h2>
+                         <h2>Factuur</h2>
                     </div>
                     
                </div>
@@ -124,42 +96,26 @@ http://www.templatemo.com/tm-509-hydro
     <section id="blog-detail" data-stellar-background-ratio="0.5">
           <div class="container">
                <div class="row">
-                   <div class="col-md-offset-1 col-md-10 col-sm-12">
+
+                    <div class="col-md-offset-1 col-md-10 col-sm-12">
                         <div class="section-title">
-                            <h2>Producten toevoegen</h2>
+                            <h2>Adres gegevens</h2>
                             <span class="line-bar">...</span>
                         </div>
-<form id="form1" name="form1" method="post" >
-    <p>Toevoegen van Producten en hun gegevens.</p>
-                           <table>
-            <tr><td>
-                Naam:
-                </td><td>
-    <input type="text" name="naam" id="naam" placeholder="naam" />
-                </td></tr>
-                               <tr><td>
-                Omschrijving:
-                </td><td>
-    <input type="text" name="omschrijving" id="omschrijving" placeholder="omschrijving" />
-                </td></tr>
-                               <tr><td>
-                Prijs:
-                </td><td>
-    <input type="text" name="prijs" id="prijs" placeholder="prijs" /><label name="warning" id="warning"></label>
-                </td></tr>      
-                  <tr><td>
-                      Foto:
-                  </td><td>
-     <input type="text" name="foto" id="foto" placeholder="foto">
-                </td></tr>
-                <tr><td>
-      <input type="submit" name="toevoegen" id="toevoegen" value="toevoegen">
-                  </td></tr>
-        </table>
-                       
-</form>
-                       <p><?php if (isset($mededeling)){echo $mededeling;} ?></p>
-
+                    </div>
+              </div>
+          </div>
+    </section>
+                         <!-- PRODUCTEN -->
+     <section id="blog-detail" data-stellar-background-ratio="0.5">
+          <div class="container">
+               <div class="row">
+                    <div class="col-md-offset-1 col-md-10 col-sm-12">
+                        <div class="col-md-3 col-sm-6">
+                            <form action="bestellingsformulier.php" method="post">
+                                <input type="submit" name="bevestig" class="bevestig" id="bevestig" value="Bevestig">
+                            </form>
+                        </div> 
                    </div>
               </div>
         </div>
@@ -239,35 +195,11 @@ http://www.templatemo.com/tm-509-hydro
                                              <li><a href="#sign_in" aria-controls="sign_in" role="tab" data-toggle="tab">Inloggen</a></li>
                                         </ul>
 
-                                        <!-- TAB PANES -->
-                                        <div class="tab-content">
-                                             <div role="tabpanel" class="tab-pane fade in active" id="sign_up">
-                                                  <form action="#" method="post">
-                                                       <input type="text" class="form-control" name="naam" placeholder="Naam*" required>
-                                                       <input type="text" class="form-control" name="familienaam" placeholder="Familienaam*" required>
-                                                       <input type="email" class="form-control" name="email" placeholder="Email*" required>
-                                                       <input type="tel" class="form-control" name="gsm" placeholder="GSM">
-                                                       <input type="password" class="form-control" name="paswoord" placeholder="Paswoord*" required>
-                                                       <input type="submit" class="form-control" name="submit" value="Inloggen">
-                                                      <p>*Verplicht in te vullen</p>
-                                                  </form>
-                                             </div>
-
-                                             <div role="tabpanel" class="tab-pane fade in" id="sign_in">
-                                                  <form action="#" method="post">
-                                                       <input type="email" class="form-control" name="email" placeholder="Email" required>
-                                                       <input type="password" class="form-control" name="paswoord" placeholder="Paswoord" required>
-                                                       <input type="submit" class="form-control" name="submit" value="Inloggen">
-                                                       <!-- link voor paswoord vergeten? bijplaatsen -->
-                                                  </form>
-                                             </div>
-                                        </div>
-                                   </div>
-
+                                    </div>
                               </div>
+
                          </div>
                     </div>
-
                </div>
           </div>
      </section>
@@ -280,6 +212,7 @@ http://www.templatemo.com/tm-509-hydro
      <script src="js/jquery.magnific-popup.min.js"></script>
      <script src="js/smoothscroll.js"></script>
      <script src="js/custom.js"></script>
+
 
 </body>
 </html>

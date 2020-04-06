@@ -134,19 +134,18 @@ if(document.getElementById("postcode").value == ""){
             }
             if($stmt = $mysqli->prepare($sqlp)){
                 if(!$stmt->execute()){
-                    echo "Het uitvoeren van de query is mislukt: ".$stmt->error." in query: ".$sql2;
+                    ?><script type="text/javascript"> alert('<?php echo "Het uitvoeren van de query is mislukt: ".$stmt->error." in query: ".$sql2; ?>')</script><?php
                 }
                 else{
                     $stmt->bind_result($postcodeid);
                     while($stmt->fetch()){
-                        echo "hallo";
                     }
                     
                 }
                                 
             }
             else{
-                echo "er zit een fout in de query";
+                ?><script type="text/javascript"> alert('<?php echo "Er zit een fout in de query"; ?>')</script><?php
             }
                 
             $sql = 'SELECT count(*) as aantal FROM tblKlanten where KlantEmail=? ';
@@ -180,10 +179,10 @@ if(document.getElementById("postcode").value == ""){
                 
 
                 if(!$stmt2->execute()){
-                    echo 'het uitvoeren van de query is mislukt:';
+                    ?><script type="text/javascript"> alert('<?php echo 'het uitvoeren van de query is mislukt:'; ?>')</script><?php
                 }
                 else{
-                    echo 'Het invoegen is gelukt';
+                    ?><script type="text/javascript"> alert('<?php echo 'Account is succesvol aangemaakt'; ?>')</script><?php
                     $_SESSION['ingelogged'] = $klantmail;
                 }
                 $stmt2->close();
@@ -195,7 +194,7 @@ if(document.getElementById("postcode").value == ""){
 
                    else{
 
-                       echo "je account bestaat al";
+                       ?><script type="text/javascript"> alert('<?php echo "Er bestaat al een account met dit emailadress"; ?>')</script><?php
 
                    }
 
@@ -296,13 +295,14 @@ if(document.getElementById("postcode").value == ""){
                     <ul class="nav navbar-nav navbar-nav-first">
                          <li><a href="#home" class="smoothScroll">Home</a></li>
                         <li><a href="info.php" class="smoothScroll">Over ons</a></li>
-                         <li><a href="contacten.php" class="smoothScroll">Contacten</a></li>
+                         <li><a href="gitaren.php" class="smoothScroll">Shop</a></li>
+                        <li><img src="images/cart.png"></li>
                     </ul>
 
                   <!-- IN OF UITLOGGEN -->
                    <?php if(isset($_SESSION['ingelogged'])) { ?>
                     <ul class="nav navbar-nav navbar-right">
-                        <li><form method="post"><input type="submit" name="uitloggen" id="uitloggen" value="Uitloggen" class="section-btn"></form></li>
+                        <li><form  method="post" action="homepage.php" ><input type="submit" name="uitloggen" id="uitloggen" value="Uitloggen" class="section-btn"></form></li>
                     </ul>
                     <?php } else{ ?>
                     <ul class="nav navbar-nav navbar-right">
@@ -311,7 +311,6 @@ if(document.getElementById("postcode").value == ""){
                    <?php }
                    if(isset($_POST["uitloggen"])){
                        session_destroy();
-                       header("location:homepage.php");
                    } 
                    ?>
                </div>
@@ -353,7 +352,7 @@ if(document.getElementById("postcode").value == ""){
                                    <h2>Over ons</h2>
                                    <span class="line-bar">...</span>
                               </div>
-                              <p>Hier bij GuitarWorld vind je alle verschillende elektrische gitaren voor beginners tot gevorderde. We hebben ook accessiores voor bij deze gitaren, van snaren en straps tot de verschillende gitaar kabels.</p>
+                              <p>Hier bij GuitarWorld vind je alle verschillende elektrische gitaren voor beginners tot gevorderden. We hebben ook accessoires voor bij deze gitaren, van snaren en straps tot de verschillende gitaarkabels.</p>
                          </div>
                     </div>
 
@@ -453,7 +452,7 @@ if(document.getElementById("postcode").value == ""){
                               </div>
 
                               <div class="col-md-6 col-sm-6">
-                                   <input type="tel" class="form-control" placeholder="gsm-nummer" id="cf-number" name="cf-number" required="">
+                                   <input type="tel" class="form-control" placeholder="GSM-nummer" id="cf-number" name="cf-number" required="">
                               </div>
 
                               <div class="col-md-12 col-sm-12">
@@ -469,7 +468,7 @@ if(document.getElementById("postcode").value == ""){
 
                     <div class="col-md-4 col-sm-4">
                          <div class="google-map">
-	<!-- How to change your own map point
+	<!-- How to change your the map point
             1. Go to Google Maps
             2. Click on your location point
             3. Click "Share" and choose "Embed map" tab

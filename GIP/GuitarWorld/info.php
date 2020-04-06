@@ -299,13 +299,14 @@ http://www.templatemo.com/tm-509-hydro
                     <ul class="nav navbar-nav navbar-nav-first">
                          <li><a href="homepage.php#home" class="smoothScroll">Home</a></li>
                          <li><a href="homepage.php#about" class="smoothScroll">Over ons</a></li>
-                         <li><a href="contacten.php" class="smoothScroll">Contact</a></li>
+                         <li><a href="gitaren.php" class="smoothScroll">Shop</a></li>
+                        <li><img src="images/cart.png"></li>
                     </ul>
 
                     <!-- IN OF UITLOGGEN -->
                    <?php if(isset($_SESSION['ingelogged'])) { ?>
                     <ul class="nav navbar-nav navbar-right">
-                        <li><form method="post"><input type="submit" name="uitloggen" id="uitloggen" value="Uitloggen" class="section-btn"></form></li>
+                        <li><form  method="post" action="homepage.php" ><input type="submit" name="uitloggen" id="uitloggen" value="Uitloggen" class="section-btn"></form></li>
                     </ul>
                     <?php } else{ ?>
                     <ul class="nav navbar-nav navbar-right">
@@ -314,7 +315,6 @@ http://www.templatemo.com/tm-509-hydro
                    <?php }
                    if(isset($_POST["uitloggen"])){
                        session_destroy();
-                       header("location:homepage.php");
                    } 
                    ?>
                </div>

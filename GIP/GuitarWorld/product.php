@@ -1,13 +1,16 @@
 <?php session_start(); ?>
 <?php
-if(isset($_SESSION["product"]) && $_SESSION["product"] != ""){
-    $nm = $_SESSION["product"];
-    $mysqli= new MySQLi ("localhost","root","","guitarworld");
+$nummer = 0;
+$klantnummer = 0;
+$mysqli= new MySQLi ("localhost","root","","guitarworld");
+
+if(isset($_GET["productid"]) && $_GET["productid"] != ""){
+    $id = mysqli_real_escape_string($mysqli, $_GET["productid"]);
 if(mysqli_connect_errno()) {
     trigger_error('Fout bij verbinding: '.$mysqli->error); 
 }
     else{
-        $sql = "SELECT ProductNaam, ProductOmschrijving, ProductPrijs, ProductFoto FROM tblProducten WHERE ProductNaam = '".$nm."'";
+        $sql = "SELECT ProductNaam, ProductOmschrijving, ProductPrijs, ProductFoto FROM tblProducten WHERE ProductId = ".$id;
         if($stmt = $mysqli->prepare($sql)){
             if(!$stmt->execute()){
             echo 'Het uitvoeren van de query is mislukt: '.$stmt->error.' in query: '.$sql;
@@ -229,7 +232,7 @@ if(document.getElementById("postcode").value == ""){
                 ///echo 'Er zit een fout in de query: '.$mysqli->error;
             }
         }
-
+     
     }
 
 ?>
@@ -320,13 +323,14 @@ if(document.getElementById("postcode").value == ""){
                     <ul class="nav navbar-nav navbar-nav-first">
                          <li><a href="#home" class="smoothScroll">Home</a></li>
                         <li><a href="info.php" class="smoothScroll">Over ons</a></li>
-                         <li><a href="contacten.php" class="smoothScroll">Contacten</a></li>
+                         <li><a href="gitaren.php" class="smoothScroll">Shop</a></li>
+                        <li><a href="Winkelwagentje.php"><img src="images/cart.png"><?php echo $_SESSION["count"]; ?></a></li>
                     </ul>
 
                   <!-- IN OF UITLOGGEN -->
                    <?php if(isset($_SESSION['ingelogged'])) { ?>
                     <ul class="nav navbar-nav navbar-right">
-                        <li><form method="post"><input type="submit" name="uitloggen" id="uitloggen" value="Uitloggen" class="section-btn"></form></li>
+                        <li><form  method="post" action="homepage.php" ><input type="submit" name="uitloggen" id="uitloggen" value="Uitloggen" class="section-btn"></form></li>
                     </ul>
                     <?php } else{ ?>
                     <ul class="nav navbar-nav navbar-right">
@@ -335,7 +339,6 @@ if(document.getElementById("postcode").value == ""){
                    <?php }
                    if(isset($_POST["uitloggen"])){
                        session_destroy();
-                       header("location:homepage.php");
                    } 
                    ?>
                </div>
@@ -351,13 +354,13 @@ if(document.getElementById("postcode").value == ""){
 
                     <div class="col-md-6 col-sm-12">
                          <div class="home-info">
-                              <h1><b><?php echo $nm; ?></b></h1>
+                              <h1><b><?php echo $naam; ?></b></h1>
                          </div>
                     </div>
 
                     <div class="col-md-6 col-sm-12">
                          <div class="home-video">
-                             <h1><b><?php echo $prijs." €"; ?></b></h1>
+                             <h1><b></b></h1>
                          </div>
                     </div>
 
@@ -366,7 +369,7 @@ if(document.getElementById("postcode").value == ""){
      </section>
 
 
-     <!-- OVER ONS -->
+     <!-- PRODUCT -->
      <section id="about" data-stellar-background-ratio="0.5">
           <div class="container">
                <div class="row">
@@ -375,22 +378,67 @@ if(document.getElementById("postcode").value == ""){
                          <div class="about-info">
                               <div class="section-title">
                               </div>
-                              <table width=100%>
-                                  <tr><td><b><?php echo $omschrijving; ?></b></td><td><?php echo '<img src="images/producten/"'.$foto.'">'; ?></td></tr>
-                             </table>
+                              <table width=100% margin=20px>
+                                  <tr>
+                                      <td>
+                                          <?php echo "<img src='images/producten/".$foto."'>"; ?>
+                                      </td>
+                                      <td>
+                                          <b>
+                                              <?php echo "<h3>".$prijs."€</h3>"; ?>
+                                          </b>
+                                      </td>
+                                  </tr>
+                                  <tr>
+                                      <td>
+                                          <form method="post">
+                                              <input type="submit" id="toevoegen" name="toevoegen" class="toevoegen" value="Toevoegen aan winkelmandje">
+                                          </form>
+                                      </td>
+                                      <td>
+                                          <b>
+                                              <?php echo $omschrijving; ?>
+                                        
+                                          </b>
+                                      </td>
+                                  </tr>
+                              </table>
                          </div>
                     </div>
 
-                    <div class="col-md-4 col-sm-12">
+                    
+         </div>
+    </div>
+    </section>
+    
+    <?php
+    if(isset($_POST["toevoegen"])){
+        $i = 0;
+        while( $i < $_SESSION["count"]){
+            if($_SESSION["koopwaren"][$i] == $id) {
+                $erdoor = true;
+                $herhaling = $i;    
+            }
+            $i++;
+        }
+        if (isset($erdoor)) {
+            
+        }
+        else{
+            $_SESSION["koopwaren"][$_SESSION["count"]] = $id;
+            $_SESSION["count"]++;
+        }
+    }
+    if(!isset($_SESSION["count"])){
+        $_SESSION["count"] = 0;
+    }
+    ?>
+    
+<div class="col-md-4 col-sm-12">
                          <div class="about-image">
                               <img src="images/about-image.jpg" class="img-responsive" alt="">
                          </div>
                     </div>
-
-               </div>
-          </div>
-     </section>
-
 
      <!-- FOOTER -->
      <footer data-stellar-background-ratio="0.5">
