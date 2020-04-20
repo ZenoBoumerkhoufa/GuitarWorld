@@ -1,5 +1,79 @@
 <?php session_start(); ?>
 
+<script>
+function wijzig()
+{
+
+
+
+   var ok = true;
+if (document.getElementById("naam").value=="Naam**" || document.getElementById("naam").value=="" ){
+    document.getElementById("naamVerplicht").innerHTML="Gelieve een naam in te vullen";
+    ok=false;
+
+        }
+    else{
+        document.getElementById("naamVerplicht").innerHTML="";
+
+    }
+if(document.getElementById("familienaam").value == ""){
+    document.getElementById("familienaamVerplicht").innerHTML="Gelieve een familienaam in te vullen";
+    ok=false;
+}
+    else{
+        document.getElementById("familienaamVerplicht").innerHTML="";
+    }
+if(document.getElementById("email").value == ""){
+    document.getElementById("emailVerplicht").innerHTML="Gelieve een email in te vullen";
+    ok=false;
+}
+    else{
+        document.getElementById("emailVerplicht").innerHTML="";
+    }
+if (document.getElementById("straat").value==""){
+    document.getElementById("straatVerplicht").innerHTML="Gelieve een straatnaam in te vullen";
+    ok=false;
+        }
+    else{
+        document.getElementById("straatVerplicht").innerHTML="";
+    }
+  if (document.getElementById("huisnummer").value==""){
+    document.getElementById("huisnummerVerplicht").innerHTML="Gelieve een huisnummer in te vullen";
+    ok=false;
+        }
+    else{
+        document.getElementById("huisnummerVerplicht").innerHTML="";
+	}
+
+if(document.getElementById("postcode").value == ""){
+    document.getElementById("postcodeVerplicht").innerHTML="Gelieve een postcode in te vullen";
+    ok=false;
+}
+    else{
+        document.getElementById("postcodeVerplicht").innerHTML="";
+    }
+    if(document.getElementById("gemeente").value == ""){
+        document.getElementById("gemeenteVerplicht").innerHTML="Gelieve een gemeente in te vullen";
+        ok=false;
+    }
+    else{
+        document.getElementById("gemeenteVerplicht").innerHTML="";
+    }
+
+
+    if (ok==true){
+
+    document.bevestiging.submit();
+}
+
+}
+
+</script>
+ <style type="text/css">
+    .fout {
+	color: #F00;
+}
+    </style>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -112,8 +186,7 @@ http://www.templatemo.com/tm-509-hydro
                <div class="row">
                     <div class="col-md-offset-1 col-md-10 col-sm-12">
                         <div class="col-md-3 col-sm-6">
-                            
-                            <form action="factuur.php" method="post">
+                            <form action="factuur.php" name="bevestiging" id="bevestiging" method="post">
                                  <input type="text" class="form-control" name="naam" id="naam" placeholder="Naam*" >
                                  <label id="naamVerplicht" class="fout"></label>
                                  <input type="text" class="form-control" name="familienaam" id="familienaam" placeholder="Familienaam*" required>
@@ -121,25 +194,90 @@ http://www.templatemo.com/tm-509-hydro
                                  <input type="email" class="form-control" name="email" id="email" placeholder="Email*" required>
                                  <label id="emailVerplicht" class="fout"></label>
                                  <input type="tel" class="form-control" name="gsm" id="gsm" placeholder="GSM">
-                                 <input type="password" class="form-control" name="paswoord" id="paswoord" placeholder="Paswoord*" required>
-                                 <label id="paswoordControle" class="fout"></label><label id="paswoordVerplicht" class="fout"></label>
-                                 <input type="password" class="form-control" name="paswoordConfirm" id="paswoordConfirm" placeholder="Paswoord bevestigen*" required>
-                                 <label id="paswoordConfirmControle" class="fout"></label><label id="paswoordConfirmVerplicht" class="fout"></label>
+                                 <label></label>
+                                 <input type="text" class="form-control" name="straat" id="straat" placeholder="Straat*" required>
+                                 <label id="straatVerplicht" class="fout"></label>
+                                 <input type="huisnummer" class="form-control" name="huisnummer" id="huisnummer" placeholder="Huisnummer*" required>
+                                 <label id="huisnummerVerplicht" class="fout"></label>
                                  <input type="text" class="form-control" name="postcode" id="postcode" placeholder="Postcode*" required>
                                  <label id="postcodeVerplicht" class="fout"></label>
                                  <input type="text" class="form-control" name="gemeente" id="gemeente" placeholder="Gemeente*" required>
                                  <label id="gemeenteVerplicht" class="fout"></label>
-                                 <input type="button" class="form-control" name="maken" id="maken" value=" Account Aanmaken" onclick="wijzig();">
                                  <p>*Verplicht in te vullen</p>
-                                <input type="submit" name="bevestig" class="bevestig" id="bevestig" value="Bevestig">
-                            </form>
+                                <input type="submit" name="bevestig" class="section-btn" id="bevestig" value="Bevestig" onclick="wijzig();">
+                            </form>                            
                         </div> 
                    </div>
               </div>
         </div>
     </section>
 
-
+<?php
+    
+    if(isset($_POST['bevestig'])){
+        $mysqli = new MySQLi ("localhost","root","","guitarworld");
+        if(mysqli_connect_errno()){trigger_error('Fout bij de verbinding:'.$mysqli->error);}
+        else{
+            sql = "INSERT INTO tblbestellingen (KlantId, productId, datum, Adres, huisnummer, postcode ) VALUES (?,?,?,?,?,?)";
+            if($stmt = $mysqli->prepare($sql)){
+                $stmt->bind_param('iis',$klant,$producten,$datum,$adres,$huisnummer,$postcode);
+                $klant = $mysqli->real_escape_string($_POST['naam'] + $_POST['familienaam']);
+                
+                
+                
+                
+                
+                
+                if(isset($_SESSION["ingelogged"])){
+        if($_SESSION["count"] != 0){
+          $mysqli = mysqli_connect('localhost', 'root', '', 'guitarworld');
+          if(mysqli_connect_errno()) {
+              trigger_error('Fout bij verbinding: '.$mysqli->error);
+          }
+          else {
+              for ($y=0; $y < $_SESSION['count']; $y++) {
+                  $productiden[$y] = $_SESSION["koopwaren"][$y];
+              }
+              $querries = array();
+              for ($i=0; $i < $_SESSION['count']; $i++) {
+                  $querries[$i] = "SELECT ProductNaam, ProductOmschrijving, ProductPrijs, ProductFoto FROM tblproducten WHERE productId = '$productiden[$i]'";
+              }
+              foreach ($querries as $querrie){
+                  if($stmt = $mysqli->prepare($querrie)){
+                      if(!$stmt->execute()){
+                          echo 'Het uitvoeren van de query is mislukt: '.$stmt->error.' in query: '.$querrie;
+                      }
+                      else{
+                          $stmt->bind_result($productnaam, $beschrijving, $prijs, $foto);
+                          while($stmt->fetch()){ 
+                              $prodcten += $productnaam;
+                          }
+                            
+                      }
+                 }
+              }
+            }
+        }
+    }
+    else{
+        echo "<script type='text/javascript'>alert('Je bent niet ingelogged');</script>";
+        header("location:homepage.php");
+    }
+                
+                
+                
+date_default_timezone_set('Europe/Brussels');
+$datum = date('m/d/Y h:i:s a', time());
+                $adres = $mysqli->real_escape_string($_POST['straat']);
+                $huisnummer = $mysqli->real_escape_string($_POST['huisnummer']);
+                $postcode = $mysqli->real_escape_string($POST['postcode']);
+                
+                
+            }
+        }
+    }
+    
+    ?>
      <!-- FOOTER -->
      <footer data-stellar-background-ratio="0.5">
           <div class="container">

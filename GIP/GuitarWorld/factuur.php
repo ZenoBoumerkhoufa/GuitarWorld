@@ -112,7 +112,45 @@ http://www.templatemo.com/tm-509-hydro
                <div class="row">
                     <div class="col-md-offset-1 col-md-10 col-sm-12">
                         <div class="col-md-3 col-sm-6">
-                            <form action="bestellingsformulier.php" method="post">
+                            <form action="homepage.php" method="post">
+                                  <?php
+    if(isset($_SESSION["ingelogged"])){
+        if($_SESSION["count"] != 0){
+          $mysqli = mysqli_connect('localhost', 'root', '', 'guitarworld');
+          if(mysqli_connect_errno()) {
+              trigger_error('Fout bij verbinding: '.$mysqli->error);
+          }
+          else {
+              for ($y=0; $y < $_SESSION['count']; $y++) {
+                  $productiden[$y] = $_SESSION["koopwaren"][$y];
+              }
+              $querries = array();
+              for ($i=0; $i < $_SESSION['count']; $i++) {
+                  $querries[$i] = "SELECT ProductNaam, ProductOmschrijving, ProductPrijs, ProductFoto FROM tblproducten WHERE productId = '$productiden[$i]'";
+              }
+              foreach ($querries as $querrie){
+                  if($stmt = $mysqli->prepare($querrie)){
+                      if(!$stmt->execute()){
+                          echo 'Het uitvoeren van de query is mislukt: '.$stmt->error.' in query: '.$querrie;
+                      }
+                      else{
+                          $stmt->bind_result($productnaam, $beschrijving, $prijs, $foto);
+                          ?><tabele width=100% class="tabel"><?php
+                          while($stmt->fetch()){
+                            ?> <tr><td><?php echo $productnaam; ?></td></tr><tr><td><?php echo $prijs; ?>€</td></tr><tr><td><image src="images\producten<?php echo $foto; ?>"></image></td><td><?php echo $beschrijving; ?></td></tr>
+                            <?php } ?>
+                            </tabele><?php
+                      }
+                 }
+              }
+            }
+        }
+    }
+    else{
+        echo "<script type='text/javascript'>alert('Je bent niet ingelogged');</script>";
+        header("location:homepage.php");
+    }
+    ?>    
                                 <input type="submit" name="bevestig" class="bevestig" id="bevestig" value="Bevestig">
                             </form>
                         </div> 
