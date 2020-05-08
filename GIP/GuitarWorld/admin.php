@@ -216,8 +216,10 @@ GSM:
                     trigger_error('Fout bij de verbinding: '.$mysqli->error);
                 }
                 else{
-                    $sql = 'select * from tblKlanten where KlantNr ='.$klantnummer;
+                    $sql = 'select * from tblKlanten where KlantNr LIKE ?';
                     if($stmt = $mysqli->prepare($sql)){
+                        $stmt->bind_param("i",$knr);
+                        $knr = "%".$klantnummer."%";
                         if(!$stmt->execute()){
                             echo 'Het uitvoeren van de query is mislukt: '.$stmt->error.' in query: '.$sql;
                         }
@@ -245,8 +247,10 @@ GSM:
                         trigger_error('Fout bij de verbinding: '.$mysqli->error);
                     }
                     else{
-                        $sql = "select * from tblKlanten where KlantNaam = '".$naam."'";
+                        $sql = "select * from tblKlanten where KlantNaam LIKE ?";
                         if($stmt = $mysqli->prepare($sql)){
+                            $stmt->bind_param("s",$nm);
+                            $nm = "%".$naam."%";
                             if(!$stmt->execute()){
                                 echo 'Het uitvoeren van de query is mislukt: '.$stmt->error.' in query: '.$sql;
                             }
@@ -274,8 +278,10 @@ GSM:
                         trigger_error('Fout bij de verbinding: '.$mysqli->error);
                     }
                     else{
-                        $sql = "select * from tblKlanten where KlantFamilienaam = '".$familienaam."'";
+                        $sql = "select * from tblKlanten where KlantFamilienaam LIKE ?";
                         if($stmt = $mysqli->prepare($sql)){
+                            $stmt->bind_param("s",$fnm);
+                            $fnm = "%".$familienaam."%";
                             if(!$stmt->execute()){
                                 echo 'Het uitvoeren van de query is mislukt: '.$stmt->error.' in query: '.$sql;
                             }
@@ -303,8 +309,10 @@ GSM:
                         trigger_error('Fout bij de verbinding: '.$mysqli->error);
                     }
                     else{
-                        $sql = "select * from tblKlanten where KlantEmail ='".$mail."'";
+                        $sql = "select * from tblKlanten where KlantEmail LIKE ?";
                         if($stmt = $mysqli->prepare($sql)){
+                            $stmt->bind_param("s",$m);
+                            $m = "%".$mail."%";
                             if(!$stmt->execute()){
                                 echo 'Het uitvoeren van de query is mislukt: '.$stmt->error.' in query: '.$sql;
                             }
@@ -332,8 +340,10 @@ GSM:
                         trigger_error('Fout bij de verbinding: '.$mysqli->error);
                     }
                     else{
-                        $sql = "select * from tblKlanten where KlantGSM ='".$gsm."'";
+                        $sql = "select * from tblKlanten where KlantGSM LIKE ?";
                         if($stmt = $mysqli->prepare($sql)){
+                            $stmt->bind_param("i",$g);
+                            $g = "%".$gsm."%";
                             if(!$stmt->execute()){
                                 echo 'Het uitvoeren van de query is mislukt: '.$stmt->error.' in query: '.$sql;
                             }
@@ -368,8 +378,10 @@ GSM:
                     trigger_error('Fout bij de verbinding: '.$mysqli->error);
                 }
                 else{
-                    $sql = 'select ProductId, ProductNaam, ProductOmschrijving, ProductPrijs from tblProducten where ProductId ='.$id;
+                    $sql = 'select ProductId, ProductNaam, ProductOmschrijving, ProductPrijs from tblProducten where ProductId LIKE ?';
                     if($stmt = $mysqli->prepare($sql)){
+                        $stmt->bind_param("i",$nr);
+                        $nr = "%".$id."%";
                         if(!$stmt->execute()){
                             echo 'Het uitvoeren van de query is mislukt: '.$stmt->error.' in query: '.$sql;
                         }
@@ -397,8 +409,10 @@ GSM:
                     trigger_error('Fout bij de verbinding: '.$mysqli->error);
                 }
                 else{
-                    $sql = "select ProductId, ProductNaam, ProductOmschrijving, ProductPrijs from tblProducten where ProductNaam ='".$naam."'";
+                    $sql = "select ProductId, ProductNaam, ProductOmschrijving, ProductPrijs from tblProducten where ProductNaam LIKE ?";
                     if($stmt = $mysqli->prepare($sql)){
+                        $stmt->bind_param("s",$nm);
+                        $nm = "%".$naam."%";
                         if(!$stmt->execute()){
                             echo 'Het uitvoeren van de query is mislukt: '.$stmt->error.' in query: '.$sql;
                         }
@@ -447,22 +461,9 @@ GSM:
                               <h2>Bedrijf</h2>
                               <ul class="footer-link">
                                    <li><a href="info.php">Over ons</a></li>
-                                  <li><a href="contacten.php">Contact</a></li>
                               </ul>
                          </div>
                     </div>
-
-                    <div class="col-md-2 col-sm-4"> 
-                         <div class="footer-thumb"> 
-                              <h2>Services</h2>
-                              <ul class="footer-link">
-                                   <li><a href="#">2de hands</a></li>
-                                   <li><a href="#">Garantie</a></li>
-                                   <li><a href="#">Promotie's</a></li>
-                              </ul>
-                         </div>
-                    </div>
-
                     <div class="col-md-12 col-sm-12">
                          <div class="footer-bottom">
                               <div class="col-md-6 col-sm-5">

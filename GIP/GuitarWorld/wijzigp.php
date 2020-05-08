@@ -182,6 +182,7 @@ http://www.templatemo.com/tm-509-hydro
                         <!-- VALUE'S -->                        
                         
 <?php
+                        $nr = "%";
         if(isset($_SESSION["id"]) && $_SESSION["id"] != ""){
             $nr = $_SESSION["id"];
                         
@@ -190,8 +191,10 @@ http://www.templatemo.com/tm-509-hydro
                     trigger_error('Fout bij de verbinding: '.$mysqli->error);
                 }
                 else{
-                    $sql = "select ProductId, ProductNaam, ProductOmschrijving, ProductPrijs from tblProducten where ProductId = ". $nr ;
+                    $sql = "select ProductId, ProductNaam, ProductOmschrijving, ProductPrijs from tblProducten where ProductId LIKE ?" ;
                     if($stmt = $mysqli->prepare($sql)){
+                        $stmt->bind_param("s",$zoek);
+                        $zoek = "%".$nr."%";
                         if(!$stmt->execute()){
                             echo "Het uitvoeren van de query is mislukt: ".$stmt->error." in de query: ".$sql;
                         }
@@ -256,22 +259,9 @@ Te wijzigen:
                               <h2>Bedrijf</h2>
                               <ul class="footer-link">
                                    <li><a href="info.php">Over ons</a></li>
-                                  <li><a href="contacten.php">Contact</a></li>
                               </ul>
                          </div>
                     </div>
-
-                    <div class="col-md-2 col-sm-4"> 
-                         <div class="footer-thumb"> 
-                              <h2>Services</h2>
-                              <ul class="footer-link">
-                                   <li><a href="#">2de hands</a></li>
-                                   <li><a href="#">Garantie</a></li>
-                                   <li><a href="#">Promotie's</a></li>
-                              </ul>
-                         </div>
-                    </div>
-
                     <div class="col-md-12 col-sm-12">
                          <div class="footer-bottom">
                               <div class="col-md-6 col-sm-5">

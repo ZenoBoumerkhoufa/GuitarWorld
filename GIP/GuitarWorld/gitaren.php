@@ -350,7 +350,10 @@ http://www.templatemo.com/tm-509-hydro
                             <!---ZOEKBALK--->
                             
                             <form method="post">
-                            <input id="artikelzoeken" type="search" name="artikelzoeken" value="" placeholder="Zoeken naar...." autocomplete="off">
+                                <table><tr>
+                                    <td><input id="artikelzoeken" type="search" name="artikelzoeken" value="" placeholder="Zoeken naar...." autocomplete="off"></td><td><input type="button" id="artikelzoeken" value="zoeken"></td>
+                                    </tr>
+                                </table>
                             </form>
                             
                             <table width=80% margin=10 padding=10><tr class="tabel" id="tabel" height="150" >
@@ -379,28 +382,23 @@ if(mysqli_connect_errno()) {
             else{
                 $stmt->bind_result($productid, $naam, $omschrijving, $prijs, $foto);
                 $a = 1;
-                while($stmt->fetch()){ echo  '              
+                while($stmt->fetch()){ ?>              
                                 <form action="product.php?" method="post">
     <div class="row">
       <div class="col-md-7">
-      <td><h3>'.$naam.'</h3>
-        <a href="product.php?actie=doogaan&productid='.$productid.'">
-          <img class="fotos" src="images/producten/'.$foto.'" alt="foto" >
-      </div>
-      <div class="col-md-5">
-              <h4>'.$prijs.'€</h4>
-              <p>'.$omschrijving.'</p>
+      <tr>
+      <a href="product.php?actie=doogaan&productid=<?php echo $productid; ?>">
+      <td><img class="fotos" src="images/producten/<?php echo $foto; ?>" alt="foto" ></td>
+      <td><h3><?php echo $naam; ?></h3></td>
+      <td><h4><?php echo $prijs; ?>€</h4></td>              
               </a>
-        <a class="btn btn-primary" href="product.php?productid='.$productid.'">Bekijk product</a></td>
+        <td><a class="btn btn-primary" href="product.php?productid=<?php echo $productid; ?>">Bekijk product</a></td>
+        </tr>
       </div>
     </div>
- </form>';
-                                
-                    
-                    if($a % 3 == 0){
-                        echo "</tr><tr class='tabel' id='tabel'>";
-                    }
-                    $a++;
+ </form> 
+    
+        <?php
                 }
             }
         $stmt->close();
@@ -435,22 +433,9 @@ if(mysqli_connect_errno()) {
                               <h2>Bedrijf</h2>
                               <ul class="footer-link">
                                    <li><a href="info.php">Over ons</a></li>
-                                  <li><a href="contacten.php">Contact</a></li>
                               </ul>
                          </div>
                     </div>
-
-                    <div class="col-md-2 col-sm-4"> 
-                         <div class="footer-thumb"> 
-                              <h2>Services</h2>
-                              <ul class="footer-link">
-                                   <li><a href="#">2de hands</a></li>
-                                   <li><a href="#">Garantie</a></li>
-                                   <li><a href="#">Promotie's</a></li>
-                              </ul>
-                         </div>
-                    </div>
-
                     <div class="col-md-12 col-sm-12">
                          <div class="footer-bottom">
                               <div class="col-md-6 col-sm-5">

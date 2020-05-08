@@ -387,19 +387,6 @@ if(document.getElementById("postcode").value == ""){
                     <div class="col-md-3 col-sm-6">
                          <!-- WORK THUMB -->
                          <div class="work-thumb">
-                              <a href="<!-- ACCESSIORESPAGINA -->">
-                                   <img src="images/F_Strap.jpg" class="img-responsive" alt="accessiores">
-
-                                   <div class="work-info">
-                                        <h3>Accessiores</h3>
-                                   </div>
-                              </a>
-                         </div>
-                    </div>
-
-                    <div class="col-md-3 col-sm-6">
-                         <!-- WORK THUMB -->
-                         <div class="work-thumb">
                               <a href="contacten.php">
                                    <img src="images/contacten.jpg" class="img-responsive" alt="Contact">
 
@@ -427,62 +414,6 @@ if(document.getElementById("postcode").value == ""){
           </div>
      </section>
 
-     <!-- CONTACT -->
-     <section id="contact" data-stellar-background-ratio="0.5">
-          <div class="container">
-               <div class="row">
-
-                    <div class="col-md-12 col-sm-12">
-                         <div class="section-title">
-                              <h2>Contacteer ons</h2>
-                              <span class="line-bar">...</span>
-                         </div>
-                    </div>
-
-                    <div class="col-md-8 col-sm-8">
-
-                         <!-- CONTACT FORM HERE -->
-                         <form id="contact-form" role="form" action="#" method="post">
-                              <div class="col-md-6 col-sm-6">
-                                   <input type="text" class="form-control" placeholder="Volledige naam" id="cf-name" name="cf-name" required="">
-                              </div>
-
-                              <div class="col-md-6 col-sm-6">
-                                   <input type="email" class="form-control" placeholder="Email" id="cf-email" name="cf-email" required="">
-                              </div>
-
-                              <div class="col-md-6 col-sm-6">
-                                   <input type="tel" class="form-control" placeholder="GSM-nummer" id="cf-number" name="cf-number" required="">
-                              </div>
-
-                              <div class="col-md-12 col-sm-12">
-                                   <textarea class="form-control" rows="6" placeholder="Benodigdheden" id="cf-message" name="cf-message" required=""></textarea>
-                              </div>
-
-                              <div class="col-md-4 col-sm-12">
-                                   <input type="submit" class="form-control" name="submit" id="submit" value="Verstuur">
-                              </div>
-
-                         </form>
-                    </div>
-
-                    <div class="col-md-4 col-sm-4">
-                         <div class="google-map">
-	<!-- How to change your the map point
-            1. Go to Google Maps
-            2. Click on your location point
-            3. Click "Share" and choose "Embed map" tab
-            4. Copy only URL and paste it within the src="" field below
-	-->
-                              <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2508.6201788570274!2d3.7162535155263283!3d51.04163547956129!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47c3715ea5c997c9%3A0xc0c7fd5045b75af3!2sKortrijksesteenweg%2012%2C%209000%20Gent!5e0!3m2!1snl!2sbe!4v1574964123487!5m2!1snl!2sbe" width="600" height="450" frameborder="0" style="border:0;" allowfullscreen=""></iframe>
-                         </div>
-                    </div>
-
-               </div>
-          </div>
-     </section>
-
-
      <!-- FOOTER -->
      <footer data-stellar-background-ratio="0.5">
           <div class="container">
@@ -500,22 +431,9 @@ if(document.getElementById("postcode").value == ""){
                               <h2>Bedrijf</h2>
                               <ul class="footer-link">
                                    <li><a href="info.php">Over ons</a></li>
-                                  <li><a href="contacten.php">Contact</a></li>
                               </ul>
                          </div>
                     </div>
-
-                    <div class="col-md-2 col-sm-4">
-                         <div class="footer-thumb">
-                              <h2>Services</h2>
-                              <ul class="footer-link">
-                                   <li><a href="#">2de hands</a></li>
-                                   <li><a href="#">Garantie</a></li>
-                                   <li><a href="#">Promoties</a></li>
-                              </ul>
-                         </div>
-                    </div>
-
                     <div class="col-md-12 col-sm-12">
                          <div class="footer-bottom">
                               <div class="col-md-6 col-sm-5">

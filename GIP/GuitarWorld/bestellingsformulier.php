@@ -295,22 +295,9 @@ $datum = date('m/d/Y h:i:s a', time());
                               <h2>Bedrijf</h2>
                               <ul class="footer-link">
                                    <li><a href="info.php">Over ons</a></li>
-                                  <li><a href="contacten.php">Contact</a></li>
                               </ul>
                          </div>
                     </div>
-
-                    <div class="col-md-2 col-sm-4"> 
-                         <div class="footer-thumb"> 
-                              <h2>Services</h2>
-                              <ul class="footer-link">
-                                   <li><a href="#">2de hands</a></li>
-                                   <li><a href="#">Garantie</a></li>
-                                   <li><a href="#">Promotie's</a></li>
-                              </ul>
-                         </div>
-                    </div>
-
                     <div class="col-md-12 col-sm-12">
                          <div class="footer-bottom">
                               <div class="col-md-6 col-sm-5">
