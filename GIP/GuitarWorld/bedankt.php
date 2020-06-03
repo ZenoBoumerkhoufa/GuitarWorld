@@ -99,75 +99,22 @@ http://www.templatemo.com/tm-509-hydro
 
                     <div class="col-md-offset-1 col-md-10 col-sm-12">
                         <div class="section-title">
-                            <h2>Adres gegevens</h2>
+                            <h2>Bedankt voor uw bestelling</h2>
                             <span class="line-bar">...</span>
                         </div>
                     </div>
               </div>
           </div>
     </section>
-                         <!-- PRODUCTEN -->
+                         <!-- TEKST -->
      <section id="blog-detail" data-stellar-background-ratio="0.5">
           <div class="container">
                <div class="row">
                     <div class="col-md-offset-1 col-md-10 col-sm-12">
                         <div class="col-md-3 col-sm-6">
-                            <form action="bedankt.php" method="post">
-                                 <!-- BESTELLING TONEN -->
-
-<?php
-    $totaal = 0;
-    $producten = "";
-    
-
- if(isset($_SESSION["ingelogged"])){
-        if($_SESSION["count"] != 0){
-          $mysqli = mysqli_connect('localhost', 'root', '', 'guitarworld');
-          if(mysqli_connect_errno()) {
-              trigger_error('Fout bij verbinding: '.$mysqli->error);
-          }
-          else {
-              for ($y=0; $y < $_SESSION['count']; $y++) {
-                  $productiden[$y] = $_SESSION["koopwaren"][$y];
-              }
-              $querries = array();
-              for ($i=0; $i < $_SESSION['count']; $i++) {
-                  $querries[$i] = "SELECT productId, ProductNaam, ProductPrijs FROM tblproducten WHERE productId = '$productiden[$i]'";
-              }
-              foreach ($querries as $querrie){
-                  if($stmt = $mysqli->prepare($querrie)){
-                      if(!$stmt->execute()){
-                          echo 'Het uitvoeren van de query is mislukt: '.$stmt->error.' in query: '.$querrie;
-                      }
-                      else{
-                          $stmt->bind_result($id, $productnaam, $prijs);
-                           ?><table width=100% class="table"><?php
-                          while($stmt->fetch()){
-                            ?> <tr><td><?php echo $productnaam."</br>"; ?></td><td><?php echo $prijs; ?>€</td></tr>
-                            <?php
-                              $producten += $id." - ";
-                              $totaal += $prijs; } ?></table><?php
-                          }
-                      }
-                  }
-              }
-            }
-            }
-        else{
-            echo "<script type='text/javascript'>alert('Je bent niet ingelogged');</script>";
-            header("location:homepage.php");
-            }
-    
-                  ?><h2>TOTAAL:<?php echo $totaal."€"; ?></h2><?php
-    
-                                
-                                
-                                unset($_SESSION['count']);
-                                unset($_SESSION['koopwaren']);
-                                
-                                ?>
-                            
-                                <input type="submit" name="bevestig" class="section-btn" id="bevestig" value="Bevestig">
+                            <form action="homepage.php" method="post">
+                                <p>Bedankt voor uw bestelling bij GuitarWorld, u krijgt binnen de 24u een bevestiging met alle informatie over de levering.</p>
+                                <input type="submit" class="section-btn" name="homepage" value="naar homepage">
                             </form>
                         </div> 
                    </div>

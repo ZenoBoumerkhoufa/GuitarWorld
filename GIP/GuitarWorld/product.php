@@ -392,7 +392,7 @@ if(document.getElementById("postcode").value == ""){
                                   <tr>
                                       <td>
                                           <form method="post">
-                                              <input type="submit" id="toevoegen" name="toevoegen" class="toevoegen" value="Toevoegen aan winkelmandje">
+                                              <input type="submit" id="toevoegen" name="toevoegen" class="section-btn" value="Toevoegen aan winkelmandje">
                                           </form>
                                       </td>
                                       <td>

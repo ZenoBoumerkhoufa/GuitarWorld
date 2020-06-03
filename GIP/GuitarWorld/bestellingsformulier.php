@@ -1,4 +1,6 @@
-<?php session_start(); ?>
+<?php session_start();
+
+error_reporting (E_ALL ^ E_NOTICE); ?>
 
 <script>
 function wijzig()
@@ -77,8 +79,11 @@ if(document.getElementById("postcode").value == ""){
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <style type=”text/css” >
+.table {border:10px solid red; }
+    </style>
 
-     <title>Bestelling</title>
+     <title>GuitarWorld</title>
 <!-- 
 Hydro Template 
 http://www.templatemo.com/tm-509-hydro
@@ -205,30 +210,39 @@ http://www.templatemo.com/tm-509-hydro
                                  <label id="gemeenteVerplicht" class="fout"></label>
                                  <p>*Verplicht in te vullen</p>
                                 <input type="submit" name="bevestig" class="section-btn" id="bevestig" value="Bevestig" onclick="wijzig();">
-                            </form>                            
-                        </div> 
-                   </div>
-              </div>
-        </div>
-    </section>
-
+                            </form>
+                            
 <?php
-    
-    if(isset($_POST['bevestig'])){
+
+if(isset($_POST['bevestig'])){
         $mysqli = new MySQLi ("localhost","root","","guitarworld");
         if(mysqli_connect_errno()){trigger_error('Fout bij de verbinding:'.$mysqli->error);}
         else{
-            sql = "INSERT INTO tblbestellingen (KlantId, productId, datum, Adres, huisnummer, postcode ) VALUES (?,?,?,?,?,?)";
+            $sql = "INSERT INTO tblbestellingen (KlantId, productId, datum, Adres, huisnummer, postcode ) VALUES (?,?,?,?,?,?)";
             if($stmt = $mysqli->prepare($sql)){
-                $stmt->bind_param('iis',$klant,$producten,$datum,$adres,$huisnummer,$postcode);
-                $klant = $mysqli->real_escape_string($_POST['naam'] + $_POST['familienaam']);
+                $stmt->bind_param('ssssii', $klant, $producten, $datum, $adres, $huisnummer, $postcode);
+                $klant=$mysqli->real_escape_string($_POST["naam"]+$_POST["familienaam"]);
                 
+                date_default_timezone_set('Europe/Brussels');
+                $datum = date('m/d/Y h:i:s a', time());  
                 
-                
-                
-                
-                
-                if(isset($_SESSION["ingelogged"])){
+                $adres=$mysqli->real_escape_string($_POST["straat"]);
+                $huisnummer=$mysqli->real_escape_string($_POST["huisnummer"]);
+                $postcode=$mysqli->real_escape_string($_POST["postcode"]);
+                             
+            }
+        }
+    } 
+?>
+
+<!-- BESTELLING TONEN -->
+
+<?php
+    $totaal = 0;
+    $producten = "";
+    
+
+ if(isset($_SESSION["ingelogged"])){
         if($_SESSION["count"] != 0){
           $mysqli = mysqli_connect('localhost', 'root', '', 'guitarworld');
           if(mysqli_connect_errno()) {
@@ -240,7 +254,7 @@ http://www.templatemo.com/tm-509-hydro
               }
               $querries = array();
               for ($i=0; $i < $_SESSION['count']; $i++) {
-                  $querries[$i] = "SELECT ProductNaam, ProductOmschrijving, ProductPrijs, ProductFoto FROM tblproducten WHERE productId = '$productiden[$i]'";
+                  $querries[$i] = "SELECT productId, ProductNaam, ProductPrijs FROM tblproducten WHERE productId = '$productiden[$i]'";
               }
               foreach ($querries as $querrie){
                   if($stmt = $mysqli->prepare($querrie)){
@@ -248,36 +262,33 @@ http://www.templatemo.com/tm-509-hydro
                           echo 'Het uitvoeren van de query is mislukt: '.$stmt->error.' in query: '.$querrie;
                       }
                       else{
-                          $stmt->bind_result($productnaam, $beschrijving, $prijs, $foto);
-                          while($stmt->fetch()){ 
-                              $prodcten += $productnaam;
+                          $stmt->bind_result($id, $productnaam, $prijs);
+                           ?><table width=100% class="table"><?php
+                          while($stmt->fetch()){
+                            ?> <tr><td><?php echo $productnaam."</br>"; ?></td></tr><tr><td><?php echo $prijs; ?>€</td></tr>
+                            <?php
+                              $producten += $id." - ";
+                              $totaal += $prijs; } ?></table><?php
                           }
-                            
                       }
-                 }
+                  }
               }
             }
-        }
-    }
-    else{
-        echo "<script type='text/javascript'>alert('Je bent niet ingelogged');</script>";
-        header("location:homepage.php");
-    }
-                
-                
-                
-date_default_timezone_set('Europe/Brussels');
-$datum = date('m/d/Y h:i:s a', time());
-                $adres = $mysqli->real_escape_string($_POST['straat']);
-                $huisnummer = $mysqli->real_escape_string($_POST['huisnummer']);
-                $postcode = $mysqli->real_escape_string($POST['postcode']);
-                
-                
             }
-        }
-    }
+        else{
+            echo "<script type='text/javascript'>alert('Je bent niet ingelogged');</script>";
+            header("location:homepage.php");
+            }
     
+                  ?><h2>TOTAAL:<?php echo $totaal."€"; ?></h2><?php
     ?>
+                            
+                        </div>
+                   </div>
+              </div>
+         </div>         
+    </section>
+    
      <!-- FOOTER -->
      <footer data-stellar-background-ratio="0.5">
           <div class="container">
