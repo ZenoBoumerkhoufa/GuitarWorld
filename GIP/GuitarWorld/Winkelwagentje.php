@@ -1,5 +1,8 @@
 <?php session_start(); ?>
 <script type="text/javascript">
+    
+
+
 
 function wijzig()
 {
@@ -49,7 +52,7 @@ if (document.getElementById("paswoord").value != "") {
 
     }
     else{
-         document.getElementById("paswoordControle").innerHTML="Ongeldig paswoord, bevat minstens 1 cijfer en 1 hoofdletter en kleine letter, minimum 8 characters";
+         document.getElementById("paswoordControle").innerHTML="Ongeldig paswoord, bevat minstens 1 cijfer en 1 hoofdletter en kleine letter, minimum 8 karakters";
         ok=false;
 
     }
@@ -85,6 +88,21 @@ if(document.getElementById("postcode").value == ""){
     }
     else{
         document.getElementById("gemeenteVerplicht").innerHTML="";
+    }
+    
+    if(document.getElementById("straat").value == ""){
+        document.getElementById("straatVerplicht").innerHTML="Gelieve uw Straatnaam in te vullen";
+        ok=false;
+    }
+    else{
+        document.getElementById("straatVerplicht").innerHTML="";
+    }
+    if(document.getElementById("huisnummer").value == ""){
+        document.getElementById("huisnummerVerplicht").innerHTML = "Gelieve uw huisnummer in te vullen";
+        ok=false;
+    }
+    else{
+        document.getElementById("huisnummerVerplicht").innerHTML="";
     }
 
 
@@ -167,16 +185,18 @@ if(document.getElementById("postcode").value == ""){
 
                     if ($aantal ==0){
 
-                       $sql2 = " INSERT INTO tblKlanten (KlantNaam, KlantFamilienaam, KlantEmail, KlantGSM, KlantPaswoord, PostcodeId ) VALUES (?,?,?,?,?,?)";
+                      $sql2 = " INSERT INTO tblKlanten (KlantNaam, KlantFamilienaam, KlantEmail, KlantGSM, KlantPaswoord, PostcodeId, KlantStraat, KlantHuisnummer ) VALUES (?,?,?,?,?,?,?,?)";
 
             if($stmt2 = $mysqli->prepare($sql2)) {
-                $stmt2->bind_param('sssssi',$klantnaam,$klantfamilienaam,$klantmail, $klantgsm, $klantpaswoord, $postid);
+                $stmt2->bind_param('sssssiss',$klantnaam,$klantfamilienaam,$klantmail, $klantgsm, $klantpaswoord, $postid, $straat, $nummer);
                 $klantnaam = $mysqli->real_escape_string($_POST['naam']) ;
                 $klantfamilienaam = $mysqli->real_escape_string($_POST['familienaam']) ;
                 $klantmail=$mysqli->real_escape_string($_POST['email']) ;
                 $klantgsm=$mysqli->real_escape_string($_POST['gsm']);
                 $klantpaswoord=$mysqli->real_escape_string($_POST['paswoord']);
                 $postid = $mysqli->real_escape_string($postcodeid);
+                $straat = $mysqli->real_escape_string($_POST["straat"]);
+                $nummer = $mysqli->real_escape_string($_POST["huisnummer"]);
                 
 
                 if(!$stmt2->execute()){
@@ -185,6 +205,7 @@ if(document.getElementById("postcode").value == ""){
                 else{
                     echo 'Het invoegen is gelukt';
                     $_SESSION['ingelogged'] = $klantnaam;
+                    $_SESSION["naam"] = $klantnaam;
                 }
                 $stmt2->close();
             }
@@ -214,34 +235,37 @@ if(document.getElementById("postcode").value == ""){
     <!--- KLANT INLOGGEN --->
     <?php
     if ((isset($_POST["submit"])) && (isset($_POST["email"])) && ($_POST["email"] != "") && isset($_POST['paswoord']) && ($_POST['paswoord'] != "")){
-        $mail = $_POST["email"];
-        $paswoord = $_POST["paswoord"];
-        
+
         $mysqli= new MySQLi ("localhost","root","","guitarworld");
         if(mysqli_connect_errno()) {
             trigger_error('Fout bij verbinding: '.$mysqli->error);
         }
         else{
-            
-            $sql = 'SELECT KlantEmail, KlantPaswoord FROM tblKlanten WHERE KlantEmail = "'.$mail.'" AND KlantPaswoord = "'.$paswoord.'"';
+
+            $sql = 'SELECT KlantEmail, KlantNaam FROM tblKlanten WHERE KlantEmail = ? AND KlantPaswoord = ?';
+
             if($stmt = $mysqli->prepare($sql)) {
+                $stmt->bind_param('ss',$mail,$paswoord);
+                $mail = $_POST["email"];
+                $paswoord = $_POST["paswoord"];
                 if(!$stmt->execute()){
                     ///echo 'Het uitvoeren van de query is mislukt: '.$stmt->error.' in query: '.$sql;
                 }
                 else {
-                    $stmt->bind_result($mail, $paswoord);
+                    $stmt->bind_result($mail_persoon, $naam);
                     while($stmt->fetch()) {
-                        
+                       $_SESSION['ingelogged'] = $mail_persoon;
+                       $_SESSION["naam"] = $naam;
+                        $_SESSION["id"] = $id;
                     }
                 }
                 $stmt->close();
-                $_SESSION['ingelogged'] = $mail;
             }
             else {
                 ///echo 'Er zit een fout in de query: '.$mysqli->error;
             }
-        }    
-    }   
+        }
+    }
     ?>
 
 
@@ -297,14 +321,15 @@ http://www.templatemo.com/tm-509-hydro
                <div class="collapse navbar-collapse">
                     <ul class="nav navbar-nav navbar-nav-first">
                          <li><a href="homepage.php#home" class="smoothScroll">Home</a></li>
-                         <li><a href="homepage.php#about" class="smoothScroll">Over ons</a></li>
+                         <li><a href="info.php" class="smoothScroll">Over ons</a></li>
                          <li><a href="gitaren.php" class="smoothScroll">Shop</a></li>
-                        <li><img src="images/cart.png"><?php echo $_SESSION["count"]; ?></li>
+                        <li><img src="images/cart.png"></li>
                     </ul>
 
                      <!-- IN OF UITLOGGEN -->
                    <?php if(isset($_SESSION['ingelogged'])) { ?>
                     <ul class="nav navbar-nav navbar-right">
+                         <li class="navbar-brand"><?php echo $_SESSION["naam"]; ?></li>
                         <li><form  method="post" action="homepage.php" ><input type="submit" name="uitloggen" id="uitloggen" value="Uitloggen" class="section-btn"></form></li>
                     </ul>
                     <?php } else{ ?>
@@ -349,6 +374,7 @@ http://www.templatemo.com/tm-509-hydro
     
 
  if(isset($_SESSION["ingelogged"])){
+     if(isset($_SESSION["count"])){
         if($_SESSION["count"] != 0){
           $mysqli = mysqli_connect('localhost', 'root', '', 'guitarworld');
           if(mysqli_connect_errno()) {
@@ -378,19 +404,23 @@ http://www.templatemo.com/tm-509-hydro
                           }
                       }
                   }
-              }
-            }
-            }
-        else{
-            echo "<script type='text/javascript'>alert('Je bent niet ingelogged');</script>";
-            header("location:homepage.php");
-            }
-    
-                  ?><h2>TOTAAL:<?php echo $totaal."€"; ?></h2><?php
+              ?><h2>TOTAAL:<?php echo $totaal."€"; ?></h2><?php
     ?>
                             <form action="bestellingsformulier.php" method="post" >
                                 <input type="submit" id="bestel" name="bestel" class="section-btn" value="Bestel">
-                            </form>
+                            </form> <?php
+              }
+            }
+     }
+     else{
+         echo "<table><tr><th>Uw winkelmandje is leeg</th></tr><tr><td>Uw winkelmandje is leeg, gelieve eerst een product in uw winkelmandje te steken voor u een bestelling wilt afronden.</td></tr></table>";
+     }
+            }
+        else{
+            echo "<table><tr><th>U bent niet ingogged</th></tr><tr><td>Uw producten blijven opgeslagen en zullen zichtbaar worden wanneer u bent ingelogged</td></tr></table>";
+        }
+                            
+                            ?>
                         </div>
                     </div>
                </div>
@@ -406,7 +436,7 @@ http://www.templatemo.com/tm-509-hydro
                     <div class="col-md-5 col-sm-12">
                          <div class="footer-thumb footer-info"> 
                               <h2>GuitarWorld</h2>
-                              <p>Een wereld vol gitaren en accessiores voor iedereen.</p>
+                              <p>Een wereld vol gitaren voor iedereen.</p>
                          </div>
                     </div>
 
@@ -457,6 +487,43 @@ http://www.templatemo.com/tm-509-hydro
                                              <li class="active"><a href="#sign_up" aria-controls="sign_up" role="tab" data-toggle="tab">Maak een account</a></li>
                                              <li><a href="#sign_in" aria-controls="sign_in" role="tab" data-toggle="tab">Inloggen</a></li>
                                        </ul>
+
+                                       <!-- TAB PANES -->
+                                        <div class="tab-content">
+                                             <div role="tabpanel" class="tab-pane fade in active" id="sign_up">
+                                                  <form action="homepage.php" method="post" name="accountmaken" id="accountmaken">
+                                                       <input type="text" class="form-control" name="naam" id="naam" placeholder="Naam*" >
+                                                       <label id="naamVerplicht" class="fout"></label>
+                                                       <input type="text" class="form-control" name="familienaam" id="familienaam" placeholder="Familienaam*" required>
+                                                       <label id="familienaamVerplicht" class="fout"></label>
+                                                       <input type="email" class="form-control" name="email" id="email" placeholder="Email*" required>
+                                                       <label id="emailVerplicht" class="fout"></label>
+                                                       <input type="tel" class="form-control" name="gsm" id="gsm" placeholder="GSM">
+                                                       <input type="password" class="form-control" name="paswoord" id="paswoord" placeholder="Paswoord*" required>
+                                                    <label id="paswoordControle" class="fout"></label><label id="paswoordVerplicht" class="fout"></label>
+                                                       <input type="password" class="form-control" name="paswoordConfirm" id="paswoordConfirm" placeholder="Paswoord bevestigen*" required>
+                                                      <label id="paswoordConfirmControle" class="fout"></label><label id="paswoordConfirmVerplicht" class="fout"></label>
+                                                       <input type="text" class="form-control" name="postcode" id="postcode" placeholder="Postcode*" required>
+                                                      <label id="postcodeVerplicht" class="fout"></label>
+                                                       <input type="text" class="form-control" name="gemeente" id="gemeente" placeholder="Gemeente*" required>
+                                                      <label id="gemeenteVerplicht" class="fout"></label>
+                                                      <input type="text" class="form-control" name="straat" id="straat" placeholder="Straat*" required>
+                                                      <label id="straatVerplicht" class="fout"></label>
+                                                      <input type="text" class="form-control" name="huisnummer" id="huisnummer" placeholder="Huisnummer*" required>
+                                                      <label id="huisnummerVerplicht" class="fout"></label>                                                      
+                                                       <input type="button" class="section-btn" name="maken" id="maken" value=" Account Aanmaken" onclick="wijzig();">
+                                                      <p>*Verplicht in te vullen</p>
+                                                  </form>
+                                             </div>
+
+                                             <div role="tabpanel" class="tab-pane fade in" id="sign_in">
+                                                  <form action="#" method="post">
+                                                       <input type="email" class="form-control" name="email" placeholder="Email" required>
+                                                       <input type="password" class="form-control" name="paswoord" placeholder="Paswoord"required>
+                                                       <input type="submit" class="section-btn" name="submit" id="submit" value="Inloggen">
+                                                  </form>
+                                             </div>
+                                        </div>
                                    </div>
 
                               </div>

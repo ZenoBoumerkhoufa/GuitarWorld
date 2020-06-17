@@ -51,15 +51,16 @@ http://www.templatemo.com/tm-509-hydro
                <!-- MENU LINKS -->
                <div class="collapse navbar-collapse">
                     <ul class="nav navbar-nav navbar-nav-first">
-                         <li><a href="homepage.php#home" class="smoothScroll">Home</a></li>
-                         <li><a href="homepage.php#about" class="smoothScroll">Over ons</a></li>
+                         <li><a href="homepage.php" class="smoothScroll">Home</a></li>
+                        <li><a href="info.php" class="smoothScroll">Over ons</a></li>
                          <li><a href="gitaren.php" class="smoothScroll">Shop</a></li>
-                        <li><img src="images/cart.png"></li>
+                        <li><a href="Winkelwagentje.php"><img src="images/cart.png"></a></li>
                     </ul>
 
                     <!-- IN OF UITLOGGEN -->
                    <?php if(isset($_SESSION['ingelogged'])) { ?>
                     <ul class="nav navbar-nav navbar-right">
+                         <li class="navbar-brand"><?php echo $_SESSION["naam"]; ?></li>
                         <li><form  method="post" action="homepage.php" ><input type="submit" name="uitloggen" id="uitloggen" value="Uitloggen" class="section-btn"></form></li>
                     </ul>
                     <?php } else{ ?>
@@ -99,7 +100,7 @@ http://www.templatemo.com/tm-509-hydro
 
                     <div class="col-md-offset-1 col-md-10 col-sm-12">
                         <div class="section-title">
-                            <h2>Adres gegevens</h2>
+                            <h2>Overzicht</h2>
                             <span class="line-bar">...</span>
                         </div>
                     </div>

@@ -13,7 +13,7 @@ if(mysqli_connect_errno()) {
         $sql = "SELECT ProductNaam, ProductOmschrijving, ProductPrijs, ProductFoto FROM tblProducten WHERE ProductId = ".$id;
         if($stmt = $mysqli->prepare($sql)){
             if(!$stmt->execute()){
-            echo 'Het uitvoeren van de query is mislukt: '.$stmt->error.' in query: '.$sql;
+            // echo 'Het uitvoeren van de query is mislukt: '.$stmt->error.' in query: '.$sql;
             }
             else{
                 $stmt->bind_result($naam, $omschrijving, $prijs, $foto);
@@ -29,9 +29,14 @@ else{
 ?>
 
 <script type="text/javascript">
+    
+
+
 
 function wijzig()
 {
+
+
 
    var ok = true;
 if (document.getElementById("naam").value=="Naam**" || document.getElementById("naam").value=="" ){
@@ -76,7 +81,7 @@ if (document.getElementById("paswoord").value != "") {
 
     }
     else{
-         document.getElementById("paswoordControle").innerHTML="Ongeldig paswoord, bevat minstens 1 cijfer en 1 hoofdletter en kleine letter, minimum 8 characters";
+         document.getElementById("paswoordControle").innerHTML="Ongeldig paswoord, bevat minstens 1 cijfer en 1 hoofdletter en kleine letter, minimum 8 karakters";
         ok=false;
 
     }
@@ -112,6 +117,21 @@ if(document.getElementById("postcode").value == ""){
     }
     else{
         document.getElementById("gemeenteVerplicht").innerHTML="";
+    }
+    
+    if(document.getElementById("straat").value == ""){
+        document.getElementById("straatVerplicht").innerHTML="Gelieve uw Straatnaam in te vullen";
+        ok=false;
+    }
+    else{
+        document.getElementById("straatVerplicht").innerHTML="";
+    }
+    if(document.getElementById("huisnummer").value == ""){
+        document.getElementById("huisnummerVerplicht").innerHTML = "Gelieve uw huisnummer in te vullen";
+        ok=false;
+    }
+    else{
+        document.getElementById("huisnummerVerplicht").innerHTML="";
     }
 
 
@@ -194,16 +214,18 @@ if(document.getElementById("postcode").value == ""){
 
                     if ($aantal ==0){
 
-                       $sql2 = " INSERT INTO tblKlanten (KlantNaam, KlantFamilienaam, KlantEmail, KlantGSM, KlantPaswoord, PostcodeId ) VALUES (?,?,?,?,?,?)";
+                      $sql2 = " INSERT INTO tblKlanten (KlantNaam, KlantFamilienaam, KlantEmail, KlantGSM, KlantPaswoord, PostcodeId, KlantStraat, KlantHuisnummer ) VALUES (?,?,?,?,?,?,?,?)";
 
             if($stmt2 = $mysqli->prepare($sql2)) {
-                $stmt2->bind_param('sssssi',$klantnaam,$klantfamilienaam,$klantmail, $klantgsm, $klantpaswoord, $postid);
+                $stmt2->bind_param('sssssiss',$klantnaam,$klantfamilienaam,$klantmail, $klantgsm, $klantpaswoord, $postid, $straat, $nummer);
                 $klantnaam = $mysqli->real_escape_string($_POST['naam']) ;
                 $klantfamilienaam = $mysqli->real_escape_string($_POST['familienaam']) ;
                 $klantmail=$mysqli->real_escape_string($_POST['email']) ;
                 $klantgsm=$mysqli->real_escape_string($_POST['gsm']);
                 $klantpaswoord=$mysqli->real_escape_string($_POST['paswoord']);
                 $postid = $mysqli->real_escape_string($postcodeid);
+                $straat = $mysqli->real_escape_string($_POST["straat"]);
+                $nummer = $mysqli->real_escape_string($_POST["huisnummer"]);
                 
 
                 if(!$stmt2->execute()){
@@ -212,6 +234,7 @@ if(document.getElementById("postcode").value == ""){
                 else{
                     echo 'Het invoegen is gelukt';
                     $_SESSION['ingelogged'] = $klantmail;
+                    $_SESSION["naam"] = $klantnaam;
                 }
                 $stmt2->close();
             }
@@ -238,7 +261,7 @@ if(document.getElementById("postcode").value == ""){
 ?>
 
 
-    <!--- KLANT INLOGGEN --->
+     <!--- KLANT INLOGGEN --->
     <?php
     if ((isset($_POST["submit"])) && (isset($_POST["email"])) && ($_POST["email"] != "") && isset($_POST['paswoord']) && ($_POST['paswoord'] != "")){
 
@@ -248,7 +271,7 @@ if(document.getElementById("postcode").value == ""){
         }
         else{
 
-            $sql = 'SELECT KlantEmail FROM tblKlanten WHERE KlantEmail = ? AND KlantPaswoord = ?';
+            $sql = 'SELECT KlantEmail, KlantNaam FROM tblKlanten WHERE KlantEmail = ? AND KlantPaswoord = ?';
 
             if($stmt = $mysqli->prepare($sql)) {
                 $stmt->bind_param('ss',$mail,$paswoord);
@@ -258,9 +281,11 @@ if(document.getElementById("postcode").value == ""){
                     ///echo 'Het uitvoeren van de query is mislukt: '.$stmt->error.' in query: '.$sql;
                 }
                 else {
-                    $stmt->bind_result($mail_persoon);
+                    $stmt->bind_result($mail_persoon, $naam);
                     while($stmt->fetch()) {
                        $_SESSION['ingelogged'] = $mail_persoon;
+                       $_SESSION["naam"] = $naam;
+                        $_SESSION["id"] = $id;
                     }
                 }
                 $stmt->close();
@@ -321,15 +346,16 @@ if(document.getElementById("postcode").value == ""){
                <!-- MENU LINKS -->
                <div class="collapse navbar-collapse">
                     <ul class="nav navbar-nav navbar-nav-first">
-                         <li><a href="#home" class="smoothScroll">Home</a></li>
+                         <li><a href="homepage.php" class="smoothScroll">Home</a></li>
                         <li><a href="info.php" class="smoothScroll">Over ons</a></li>
                          <li><a href="gitaren.php" class="smoothScroll">Shop</a></li>
-                        <li><a href="Winkelwagentje.php"><img src="images/cart.png"><?php echo $_SESSION["count"]; ?></a></li>
+                        <li><a href="Winkelwagentje.php"><img src="images/cart.png"></a></li>
                     </ul>
 
                   <!-- IN OF UITLOGGEN -->
                    <?php if(isset($_SESSION['ingelogged'])) { ?>
                     <ul class="nav navbar-nav navbar-right">
+                         <li class="navbar-brand"><?php echo $_SESSION["naam"]; ?></li>
                         <li><form  method="post" action="homepage.php" ><input type="submit" name="uitloggen" id="uitloggen" value="Uitloggen" class="section-btn"></form></li>
                     </ul>
                     <?php } else{ ?>
@@ -374,7 +400,7 @@ if(document.getElementById("postcode").value == ""){
           <div class="container">
                <div class="row">
 
-                    <div class="col-md-5 col-sm-6">
+                    <div class="col-md-10 col-sm-6">
                          <div class="about-info">
                               <div class="section-title">
                               </div>
@@ -385,21 +411,25 @@ if(document.getElementById("postcode").value == ""){
                                       </td>
                                       <td>
                                           <b>
-                                              <?php echo "<h3>".$prijs."€</h3>"; ?>
+                                              <?php echo "<h3>".$prijs."€</h3><br>"; ?>
                                           </b>
-                                      </td>
-                                  </tr>
-                                  <tr>
-                                      <td>
-                                          <form method="post">
-                                              <input type="submit" id="toevoegen" name="toevoegen" class="section-btn" value="Toevoegen aan winkelmandje">
-                                          </form>
-                                      </td>
-                                      <td>
                                           <b>
                                               <?php echo $omschrijving; ?>
                                         
                                           </b>
+                                      </td>
+                                      <td>
+                                          
+                                      </td>
+                                  </tr>
+                                  <tr>
+                                      <td>
+                                          <br>
+                                          <form method="post">
+                                              <input type="submit" id="toevoegen" name="toevoegen" class="section-btn" value="Toevoegen aan winkelmandje">
+                                          </form>
+                                          <br>
+                                          <br>
                                       </td>
                                   </tr>
                               </table>
@@ -448,7 +478,7 @@ if(document.getElementById("postcode").value == ""){
                     <div class="col-md-5 col-sm-12">
                          <div class="footer-thumb footer-info">
                               <h2>GuitarWorld</h2>
-                              <p>Een wereld vol gitaren en accessiores voor iedereen.</p>
+                              <p>Een wereld vol gitaren voor iedereen.</p>
                          </div>
                     </div>
 
@@ -520,7 +550,11 @@ if(document.getElementById("postcode").value == ""){
                                                       <label id="postcodeVerplicht" class="fout"></label>
                                                        <input type="text" class="form-control" name="gemeente" id="gemeente" placeholder="Gemeente*" required>
                                                       <label id="gemeenteVerplicht" class="fout"></label>
-                                                       <input type="button" class="form-control" name="maken" id="maken" value=" Account Aanmaken" onclick="wijzig();">
+                                                      <input type="text" class="form-control" name="straat" id="straat" placeholder="Straat*" required>
+                                                      <label id="straatVerplicht" class="fout"></label>
+                                                      <input type="text" class="form-control" name="huisnummer" id="huisnummer" placeholder="Huisnummer*" required>
+                                                      <label id="huisnummerVerplicht" class="fout"></label>                                                      
+                                                       <input type="button" class="section-btn" name="maken" id="maken" value=" Account Aanmaken" onclick="wijzig();">
                                                       <p>*Verplicht in te vullen</p>
                                                   </form>
                                              </div>
@@ -529,7 +563,7 @@ if(document.getElementById("postcode").value == ""){
                                                   <form action="#" method="post">
                                                        <input type="email" class="form-control" name="email" placeholder="Email" required>
                                                        <input type="password" class="form-control" name="paswoord" placeholder="Paswoord"required>
-                                                       <input type="submit" class="form-control" name="submit" id="submit" value="Inloggen">
+                                                       <input type="submit" class="section-btn" name="submit" id="submit" value="Inloggen">
                                                   </form>
                                              </div>
                                         </div>

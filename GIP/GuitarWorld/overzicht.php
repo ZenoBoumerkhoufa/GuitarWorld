@@ -1,10 +1,18 @@
-<?php session_start(); ?>
+<?php session_start();
+$productid =0 ; ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<style type=”text/css” >
+.opmaak {border:10px solid red; }
+table{
+    border:10px solid red;
 
-     <title>GuitarWorld</title>
+}
+</style>
+     <title>Guitarworld</title>
 <!-- 
 Hydro Template 
 http://www.templatemo.com/tm-509-hydro
@@ -25,12 +33,12 @@ http://www.templatemo.com/tm-509-hydro
 </head>
 <body>
 
-     <!-- PRE LOADER -->
+     <!-- PRE LOADER 
      <section class="preloader">
           <div class="spinner">
                <span class="spinner-rotate"></span>
           </div>
-     </section>
+     </section>  -->
 
 
      <!-- MENU -->
@@ -50,26 +58,18 @@ http://www.templatemo.com/tm-509-hydro
 
                <!-- MENU LINKS -->
                <div class="collapse navbar-collapse">
-                   <ul class="nav navbar-nav navbar-nav-first">
-                         <li><a href="homepage.php" class="smoothScroll">Home</a></li>
-                        <li><a href="info.php" class="smoothScroll">Over ons</a></li>
-                         <li><a href="gitaren.php" class="smoothScroll">Shop</a></li>
-                        <li><a href="Winkelwagentje.php"><img src="images/cart.png"></a></li>
+                    <ul class="nav navbar-nav navbar-nav-first">
+                         <li><a href="admin.php" class="smoothScroll">Admin-pagina</a></li>
                     </ul>
 
-                    <!-- IN OF UITLOGGEN -->
-                   <?php if(isset($_SESSION['ingelogged'])) { ?>
-                    <ul class="nav navbar-nav navbar-right">
-                         <li class="navbar-brand"><?php echo $_SESSION["naam"]; ?></li>
-                        <li><form  method="post" action="homepage.php" ><input type="submit" name="uitloggen" id="uitloggen" value="Uitloggen" class="section-btn"></form></li>
+                    <!-- UITLOGGEN -->
+                        <ul class="nav navbar-nav navbar-right">
+                            <li><form method="post"><input type="submit" name="terug" id="terug" value="Terug" class="section-btn"></form></li>
                     </ul>
-                    <?php } else{ ?>
-                    <ul class="nav navbar-nav navbar-right">
-                         <li class="section-btn"><a href="#" data-toggle="modal" data-target="#modal-form">Inloggen</a></li>
-                    </ul>
-                   <?php }
-                   if(isset($_POST["uitloggen"])){
+                   <?php
+                   if(isset($_POST["terug"])){
                        session_destroy();
+                       header("location:admin.php");
                    } 
                    ?>
                </div>
@@ -85,7 +85,7 @@ http://www.templatemo.com/tm-509-hydro
                <div class="row">
 
                     <div class="col-md-offset-1 col-md-5 col-sm-12">
-                         <h2>Factuur</h2>
+                         <h2>Admin</h2>
                     </div>
                     
                </div>
@@ -97,33 +97,41 @@ http://www.templatemo.com/tm-509-hydro
     <section id="blog-detail" data-stellar-background-ratio="0.5">
           <div class="container">
                <div class="row">
-
-                    <div class="col-md-offset-1 col-md-10 col-sm-12">
+                   <div class="col-md-offset-1 col-md-10 col-sm-12">
                         <div class="section-title">
-                            <h2>Bedankt voor uw bestelling</h2>
+                            <h2>Overzicht van bestellingen</h2>
                             <span class="line-bar">...</span>
-                        </div>
-                    </div>
-              </div>
-          </div>
-    </section>
-                         <!-- TEKST -->
-     <section id="blog-detail" data-stellar-background-ratio="0.5">
-          <div class="container">
-               <div class="row">
-                    <div class="col-md-offset-1 col-md-10 col-sm-12">
-                        <div class="col-md-3 col-sm-6">
-                            <form action="homepage.php" method="post">
-                                <p>Bedankt voor uw bestelling bij GuitarWorld, u krijgt binnen de 24u een bevestiging met alle informatie over de levering.</p>
-                                <input type="submit" class="section-btn" name="homepage" value="naar homepage">
-                            </form>
-                        </div> 
+                        </div>               
+                       <table><tr><th style="border: 3px solid black; margin: 20px; padding: 20px">BestellingsId</th><th style="border: 3px solid black; margin: 20px; padding: 20px">Naam</th><th style="border: 3px solid black; margin: 20px; padding: 20px">Datum van bestelling</th><th style="border: 3px solid black; margin: 20px; padding: 20px">Leveradres</th><th style="border: 3px solid black; margin: 20px; padding: 20px">Product met prijs</th></tr>
+                       <?php
+                           
+                       $mysqli = new MySQLi ("localhost","root","","guitarworld");
+                       if(mysqli_connect_errno()){trigger_error('Fout bij de verbinding: '.$mysqli->error);}
+                       else{
+                           
+                           $sql = "SELECT b.bestellingsId, KlantId, datum, Adres, huisnummer, postcode, k.KlantNaam, k.KlantFamilienaam, p.ProductNaam, p.ProductPrijs FROM tblbestellingen b JOIN tblklanten k ON b.KlantId = k.KlantNr JOIN tblbestellingenperorder a ON a.bestellingsId = b.bestellingsId JOIN tblproducten p ON a.productId = p.ProductId";
+                           if($stmt = $mysqli->prepare($sql)){
+                               if(!$stmt->execute()){
+                                   echo 'Het uitvoeren van de query is mislukt: '.$stmt->error.' in query '.$sql;
+                               }
+                               else{
+                                   $stmt->bind_result($bestellingsid, $klantid, $datum, $adres, $huisnummer, $postcode, $klantnaam, $klantfamilienaam, $productnaam, $productprijs);
+                                   while($stmt->fetch()){
+                                       ?> <tr><td style="border: 3px solid black; margin: 20px; padding: 20px"><?php echo $bestellingsid ; ?></td><td style="border: 3px solid black; margin: 20px; padding: 20px"><?php echo $klantnaam." ".$klantfamilienaam; ?></td><td style="border: 3px solid black; margin: 20px; padding: 20px"><?php echo $datum; ?></td><td style="border: 3px solid black; margin: 20px; padding: 20px"><?php echo $adres.", ".$huisnummer.", ".$postcode; ?></td><td style="border: 3px solid black; margin: 20px; padding: 20px"><?php echo $productnaam." - ".$productprijs."€"; ?></td> <?php
+                                   }
+                               }
+                           }
+                       }
+                           
+                       ?>
+                            
+                       </table>
                    </div>
               </div>
         </div>
     </section>
-
-
+    
+    
      <!-- FOOTER -->
      <footer data-stellar-background-ratio="0.5">
           <div class="container">
@@ -153,45 +161,10 @@ http://www.templatemo.com/tm-509-hydro
                               </div>
                          </div>
                     </div>
-                    
                </div>
           </div>
      </footer>
 
-     <!-- MODAL -->
-     <section class="modal fade" id="modal-form" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-          <div class="modal-dialog modal-lg">
-               <div class="modal-content modal-popup">
-
-                    <div class="modal-header">
-                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                              <span aria-hidden="true">&times;</span>
-                         </button>
-                    </div>
-
-                    <div class="modal-body">
-                         <div class="container-fluid">
-                              <div class="row">
-
-                                   <div class="col-md-12 col-sm-12">
-                                        <div class="modal-title">
-                                             <h2>GuitarWorld</h2>
-                                        </div>
-
-                                        <!-- NAV TABS -->
-                                        <ul class="nav nav-tabs" role="tablist">
-                                             <li class="active"><a href="#sign_up" aria-controls="sign_up" role="tab" data-toggle="tab">Maak een account</a></li>
-                                             <li><a href="#sign_in" aria-controls="sign_in" role="tab" data-toggle="tab">Inloggen</a></li>
-                                        </ul>
-
-                                    </div>
-                              </div>
-
-                         </div>
-                    </div>
-               </div>
-          </div>
-     </section>
 
 
      <!-- SCRIPTS -->
@@ -201,7 +174,6 @@ http://www.templatemo.com/tm-509-hydro
      <script src="js/jquery.magnific-popup.min.js"></script>
      <script src="js/smoothscroll.js"></script>
      <script src="js/custom.js"></script>
-
 
 </body>
 </html>

@@ -250,7 +250,7 @@ Te wijzigen:
                     <div class="col-md-5 col-sm-12">
                          <div class="footer-thumb footer-info"> 
                               <h2>GuitarWorld</h2>
-                              <p>Een wereld vol gitaren en accessiores voor iedereen.</p>
+                              <p>Een wereld vol gitaren voor iedereen.</p>
                          </div>
                     </div>
 

@@ -84,17 +84,18 @@ http://www.templatemo.com/tm-509-hydro
                <!-- MENU LINKS -->
                <div class="collapse navbar-collapse">
                     <ul class="nav navbar-nav navbar-nav-first">
-                         <li><a href="homepage.php#home" class="smoothScroll">Home</a></li>
-                         <li><a href="homepage.php#about" class="smoothScroll">Over ons</a></li>
-                         <li><a href="homepage.php#contact" class="smoothScroll">Contact</a></li>
+                         <li><a href="homepage.php" class="smoothScroll">Home</a></li>
+                        <li><a href="info.php" class="smoothScroll">Over ons</a></li>
+                         <li><a href="gitaren.php" class="smoothScroll">Shop</a></li>
+                        <li><a href="Winkelwagentje.php"><img src="images/cart.png"></a></li>
                     </ul>
 
-                    <!-- UITLOGGEN -->
+                    <!-- TERUG -->
                         <ul class="nav navbar-nav navbar-right">
-                            <li><form method="post"><input type="submit" name="uitloggen" id="uitloggen" value="Terug" class="section-btn"></form></li>
+                            <li><form method="post"><input type="submit" name="terug" id="terug" value="Terug" class="section-btn"></form></li>
                     </ul>
                    <?php
-                   if(isset($_POST["uitloggen"])){
+                   if(isset($_POST["terug"])){
                        header("location:admin.php");
                    } 
                    ?>
@@ -174,7 +175,7 @@ http://www.templatemo.com/tm-509-hydro
                     <div class="col-md-5 col-sm-12">
                          <div class="footer-thumb footer-info"> 
                               <h2>GuitarWorld</h2>
-                              <p>Een wereld vol gitaren en accessiores voor iedereen.</p>
+                              <p>Een wereld vol gitaren voor iedereen.</p>
                          </div>
                     </div>
 

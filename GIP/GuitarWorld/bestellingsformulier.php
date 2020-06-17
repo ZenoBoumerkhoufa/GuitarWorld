@@ -1,76 +1,112 @@
 <?php session_start();
 
-error_reporting (E_ALL ^ E_NOTICE); ?>
+$bestellingsid = 0;
+$y = 0;
 
-<script>
-function wijzig()
-{
+error_reporting (E_ALL ^ E_NOTICE);
 
+if(isset($_POST['bevestig'])){
 
+$mysqli= new MySQLi ("localhost","root","","guitarworld");
+        if(mysqli_connect_errno())
+        {
+            trigger_error('Fout bij verbinding: '.$mysqli->error);
+        }else
+        {
+            $sql = "INSERT INTO tblbestellingen (KlantId, datum, Adres, huisnummer, postcode ) VALUES (?,?,?,?,?)";
+            if($stmt= $mysqli->prepare($sql))
+            {
+                $stmt->bind_param('issii',$klant,$datum,$adres, $huisnummer, $postcode);
+                $klant = $_SESSION["id"];
+                $datum = date("Y-m-d");
+                $adres=$mysqli->real_escape_string($_POST["straat"]);
+                $huisnummer= $_POST["huisnummer"];
+                $postcode= $_POST["postcode"];
 
-   var ok = true;
-if (document.getElementById("naam").value=="Naam**" || document.getElementById("naam").value=="" ){
-    document.getElementById("naamVerplicht").innerHTML="Gelieve een naam in te vullen";
-    ok=false;
-
+                if(!$stmt->execute())
+                {
+                    echo 'het uitvoeren van de query is mislukt:';
+                }
+                $stmt->close();
+            }
+            else
+            {
+                echo 'Er zit een fout in de query';
+            }
         }
-    else{
-        document.getElementById("naamVerplicht").innerHTML="";
-
-    }
-if(document.getElementById("familienaam").value == ""){
-    document.getElementById("familienaamVerplicht").innerHTML="Gelieve een familienaam in te vullen";
-    ok=false;
-}
-    else{
-        document.getElementById("familienaamVerplicht").innerHTML="";
-    }
-if(document.getElementById("email").value == ""){
-    document.getElementById("emailVerplicht").innerHTML="Gelieve een email in te vullen";
-    ok=false;
-}
-    else{
-        document.getElementById("emailVerplicht").innerHTML="";
-    }
-if (document.getElementById("straat").value==""){
-    document.getElementById("straatVerplicht").innerHTML="Gelieve een straatnaam in te vullen";
-    ok=false;
+    
+    
+    
+    
+    
+    $mysqli= new MySQLi ("localhost","root","","guitarworld");
+        if(mysqli_connect_errno())
+        {
+            trigger_error('Fout bij verbinding: '.$mysqli->error);
+        }else
+        {
+            $sql = "SELECT bestellingsId FROM tblbestellingen WHERE datum LIKE ? AND KlantId LIKE ?";
+            if($stmt = $mysqli->prepare($sql))
+            {
+                $stmt->bind_param("si",$datum, $klant);
+                $datum = date("Y-m-d");
+                $klant = $_SESSION["id"];
+                if(!$stmt->execute())
+                {
+                    echo 'het uitvoeren van de query is mislukt:'.$stmt->error.'in query: '.$sql.'<br>';
+                }else
+                {
+                    $stmt->bind_result($bid);
+                    while($stmt->fetch())
+                    {
+                        $bestellingsid = $bid;
+                    }
+                }
+                $stmt->close();
+            }else
+            {
+                echo 'Er zit een fout in de query'.$mysqli->error.'<br>';
+            }
         }
-    else{
-        document.getElementById("straatVerplicht").innerHTML="";
-    }
-  if (document.getElementById("huisnummer").value==""){
-    document.getElementById("huisnummerVerplicht").innerHTML="Gelieve een huisnummer in te vullen";
-    ok=false;
+    
+    
+    
+    
+    $mysqli= new MySQLi ("localhost","root","","guitarworld");
+        if(mysqli_connect_errno())
+        {
+            trigger_error('Fout bij verbinding: '.$mysqli->error);
+        }else
+        {
+            $sql = "INSERT INTO tblbestellingenperorder (bestellingsId, productId) VALUES (?,?)";
+            if($stmt= $mysqli->prepare($sql))
+            {
+                $stmt->bind_param('ii',$b,$p);
+                $b = $bestellingsid;
+                $p = $_SESSION["koopwaren"][$y];
+
+                if(!$stmt->execute())
+                {
+                    echo 'het uitvoeren van de query is mislukt:';
+                }
+                $stmt->close();
+            }
+            else
+            {
+                echo 'Er zit een fout in de query';
+            }
         }
-    else{
-        document.getElementById("huisnummerVerplicht").innerHTML="";
-	}
-
-if(document.getElementById("postcode").value == ""){
-    document.getElementById("postcodeVerplicht").innerHTML="Gelieve een postcode in te vullen";
-    ok=false;
-}
-    else{
-        document.getElementById("postcodeVerplicht").innerHTML="";
-    }
-    if(document.getElementById("gemeente").value == ""){
-        document.getElementById("gemeenteVerplicht").innerHTML="Gelieve een gemeente in te vullen";
-        ok=false;
-    }
-    else{
-        document.getElementById("gemeenteVerplicht").innerHTML="";
-    }
-
-
-    if (ok==true){
-
-    document.bevestiging.submit();
+    
+    header("location:factuur.php");
+    
 }
 
-}
 
-</script>
+
+
+
+?>
+
  <style type="text/css">
     .fout {
 	color: #F00;
@@ -130,15 +166,16 @@ http://www.templatemo.com/tm-509-hydro
                <!-- MENU LINKS -->
                <div class="collapse navbar-collapse">
                     <ul class="nav navbar-nav navbar-nav-first">
-                         <li><a href="homepage.php#home" class="smoothScroll">Home</a></li>
-                         <li><a href="homepage.php#about" class="smoothScroll">Over ons</a></li>
+                         <li><a href="homepage.php" class="smoothScroll">Home</a></li>
+                        <li><a href="info.php" class="smoothScroll">Over ons</a></li>
                          <li><a href="gitaren.php" class="smoothScroll">Shop</a></li>
-                        <li><img src="images/cart.png"></li>
+                        <li><a href="Winkelwagentje.php"><img src="images/cart.png"></a></li>
                     </ul>
 
                     <!-- IN OF UITLOGGEN -->
                    <?php if(isset($_SESSION['ingelogged'])) { ?>
                     <ul class="nav navbar-nav navbar-right">
+                         <li class="navbar-brand"><?php echo $_SESSION["naam"]; ?></li>
                         <li><form  method="post" action="homepage.php" ><input type="submit" name="uitloggen" id="uitloggen" value="Uitloggen" class="section-btn"></form></li>
                     </ul>
                     <?php } else{ ?>
@@ -186,54 +223,77 @@ http://www.templatemo.com/tm-509-hydro
         </div>
     </section>
                          <!-- FORMULIER -->
+    
+    
      <section id="blog-detail" data-stellar-background-ratio="0.5">
           <div class="container">
                <div class="row">
                     <div class="col-md-offset-1 col-md-10 col-sm-12">
                         <div class="col-md-3 col-sm-6">
-                            <form action="factuur.php" name="bevestiging" id="bevestiging" method="post">
-                                 <input type="text" class="form-control" name="naam" id="naam" placeholder="Naam*" >
-                                 <label id="naamVerplicht" class="fout"></label>
-                                 <input type="text" class="form-control" name="familienaam" id="familienaam" placeholder="Familienaam*" required>
-                                 <label id="familienaamVerplicht" class="fout"></label>
-                                 <input type="email" class="form-control" name="email" id="email" placeholder="Email*" required>
-                                 <label id="emailVerplicht" class="fout"></label>
-                                 <input type="tel" class="form-control" name="gsm" id="gsm" placeholder="GSM">
-                                 <label></label>
-                                 <input type="text" class="form-control" name="straat" id="straat" placeholder="Straat*" required>
-                                 <label id="straatVerplicht" class="fout"></label>
-                                 <input type="huisnummer" class="form-control" name="huisnummer" id="huisnummer" placeholder="Huisnummer*" required>
-                                 <label id="huisnummerVerplicht" class="fout"></label>
-                                 <input type="text" class="form-control" name="postcode" id="postcode" placeholder="Postcode*" required>
-                                 <label id="postcodeVerplicht" class="fout"></label>
-                                 <input type="text" class="form-control" name="gemeente" id="gemeente" placeholder="Gemeente*" required>
-                                 <label id="gemeenteVerplicht" class="fout"></label>
-                                 <p>*Verplicht in te vullen</p>
-                                <input type="submit" name="bevestig" class="section-btn" id="bevestig" value="Bevestig" onclick="wijzig();">
-                            </form>
-                            
+    
+    
+    
 <?php
-
-if(isset($_POST['bevestig'])){
-        $mysqli = new MySQLi ("localhost","root","","guitarworld");
+    
+      $mysqli = new MySQLi ("localhost","root","","guitarworld");
         if(mysqli_connect_errno()){trigger_error('Fout bij de verbinding:'.$mysqli->error);}
         else{
-            $sql = "INSERT INTO tblbestellingen (KlantId, productId, datum, Adres, huisnummer, postcode ) VALUES (?,?,?,?,?,?)";
+            $sql = "SELECT  klantStraat, KlantHuisnummer,  PCode, Gemeente FROM tblklanten k JOIN tblgemeente g ON k.PostcodeId = g.PostcodeId WHERE KlantNr LIKE ?";
             if($stmt = $mysqli->prepare($sql)){
-                $stmt->bind_param('ssssii', $klant, $producten, $datum, $adres, $huisnummer, $postcode);
-                $klant=$mysqli->real_escape_string($_POST["naam"]+$_POST["familienaam"]);
-                
-                date_default_timezone_set('Europe/Brussels');
-                $datum = date('m/d/Y h:i:s a', time());  
-                
-                $adres=$mysqli->real_escape_string($_POST["straat"]);
-                $huisnummer=$mysqli->real_escape_string($_POST["huisnummer"]);
-                $postcode=$mysqli->real_escape_string($_POST["postcode"]);
-                             
+                $stmt->bind_param("i", $id);
+                $id = $_SESSION["id"];
+              
+            
+                 if(!$stmt->execute()){
+
+                     echo 'Het uitvoeren van de query is mislukt: '.$stmt->error.' in query: '.$sql;
+                }
+                else{
+                     $stmt->bind_result($klantStraat, $KlantHuisnummer, $PCode, $Gemeente);
+                    while($stmt->fetch()){
+                    ?>
+                    
+                     <form action="#" name="bevestiging" id="bevestiging" method="post">
+                                <label>Straat: </label>
+                                 <input type="text" class="form-control" name="straat" id="straat" value="<?php echo $klantStraat; ?>" required>
+                                 <label id="straatVerplicht" class="fout"></label>
+                                
+                                <label>Huisnummer: </label>
+                                 <input type="huisnummer" class="form-control" name="huisnummer" id="huisnummer" value="<?php echo $KlantHuisnummer; ?>" required>
+                                 <label id="huisnummerVerplicht" class="fout"></label>
+                                
+                                <label>Postcode: </label>
+                                 <input type="text" class="form-control" name="postcode" id="postcode" value="<?php echo $PCode; ?>" required>
+                                 <label id="postcodeVerplicht" class="fout"></label>
+                                
+                                <label>Gemeente: </label>
+                                 <input type="text" class="form-control" name="gemeente" id="gemeente" value="<?php echo $Gemeente; ?>" required>
+                                 <label id="gemeenteVerplicht" class="fout"></label>
+                                <br>
+                                <input type="submit" name="bevestig" class="section-btn" id="bevestig" value="Bevestig" >
+                            </form>
+    
+    
+    <?php
+                    }
+                    
+                    
+                    
+            }
             }
         }
-    } 
+    
 ?>
+    
+    
+    
+    
+    
+    
+    
+                           
+                            
+
 
 <!-- BESTELLING TONEN -->
 
@@ -259,7 +319,7 @@ if(isset($_POST['bevestig'])){
               foreach ($querries as $querrie){
                   if($stmt = $mysqli->prepare($querrie)){
                       if(!$stmt->execute()){
-                          echo 'Het uitvoeren van de query is mislukt: '.$stmt->error.' in query: '.$querrie;
+                          //echo 'Het uitvoeren van de query is mislukt: '.$stmt->error.' in query: '.$querrie;
                       }
                       else{
                           $stmt->bind_result($id, $productnaam, $prijs);
@@ -286,7 +346,7 @@ if(isset($_POST['bevestig'])){
                         </div>
                    </div>
               </div>
-         </div>         
+         </div>  
     </section>
     
      <!-- FOOTER -->
@@ -297,7 +357,7 @@ if(isset($_POST['bevestig'])){
                     <div class="col-md-5 col-sm-12">
                          <div class="footer-thumb footer-info"> 
                               <h2>GuitarWorld</h2>
-                              <p>Een wereld vol gitaren en accessiores voor iedereen.</p>
+                              <p>Een wereld vol gitaren voor iedereen.</p>
                          </div>
                     </div>
 

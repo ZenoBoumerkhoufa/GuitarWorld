@@ -16,7 +16,7 @@
                                $stmt->bind_param("s", $kf);
                             $kf = $_POST["invoer"];
                             if(!$stmt->execute()){
-                                echo 'Het uitvoeren van de query is mislukt: '.$stmt->error.' in query: '.$sql;
+                                // echo 'Het uitvoeren van de query is mislukt: '.$stmt->error.' in query: '.$sql;
                             }
                             else{
                                
@@ -24,7 +24,7 @@
                             $stmt->close();
                         }
                         else{
-                            echo 'Er zit een fout in de query: '.$mysqli->error;
+                            // echo 'Er zit een fout in de query: '.$mysqli->error;
                         }
                     }
                 }
@@ -41,7 +41,7 @@
                              $stmt->bind_param("s", $kf);
                             $kf = $_POST["invoer"];
                             if(!$stmt->execute()){
-                                echo 'Het uitvoeren van de query is mislukt: '.$stmt->error.' in query: '.$sql;
+                                // echo 'Het uitvoeren van de query is mislukt: '.$stmt->error.' in query: '.$sql;
                             }
                             else{
                                  
@@ -65,7 +65,7 @@
                                $stmt->bind_param("s", $kf);
                             $kf = $_POST["invoer"];
                             if(!$stmt->execute()){
-                                echo 'Het uitvoeren van de query is mislukt: '.$stmt->error.' in query: '.$sql;
+                                // echo 'Het uitvoeren van de query is mislukt: '.$stmt->error.' in query: '.$sql;
                             }
                             else{
                               header("location:admin.php");
@@ -89,7 +89,7 @@
                                $stmt->bind_param("s", $kf);
                             $kf = $_POST["invoer"];
                             if(!$stmt->execute()){
-                                echo 'Het uitvoeren van de query is mislukt: '.$stmt->error.' in query: '.$sql;
+                                // echo 'Het uitvoeren van de query is mislukt: '.$stmt->error.' in query: '.$sql;
                             }
                             else{
                               
@@ -97,7 +97,7 @@
                             $stmt->close();
                         }
                         else{
-                            echo 'Er zit een fout in de query: '.$mysqli->error;
+                            // echo 'Er zit een fout in de query: '.$mysqli->error;
                         }
                     }
                 }
@@ -286,7 +286,7 @@ Te wijzigen:
                         $stmt->close();
                     }
                     else{
-                        echo "Er zit een fout in de query: ".$mysqli->error;
+                       // echo "Er zit een fout in de query: ".$mysqli->error;
                     }
                 }
         }
@@ -306,7 +306,7 @@ Te wijzigen:
                     <div class="col-md-5 col-sm-12">
                          <div class="footer-thumb footer-info"> 
                               <h2>GuitarWorld</h2>
-                              <p>Een wereld vol gitaren en accessiores voor iedereen.</p>
+                              <p>Een wereld vol gitaren voor iedereen.</p>
                          </div>
                     </div>
 

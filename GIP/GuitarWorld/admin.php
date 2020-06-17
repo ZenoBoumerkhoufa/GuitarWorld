@@ -1,8 +1,4 @@
-
-
 <?php session_start(); ?>
-
-
 
 
 <!DOCTYPE html>
@@ -62,8 +58,7 @@ http://www.templatemo.com/tm-509-hydro
                <!-- MENU LINKS -->
                <div class="collapse navbar-collapse">
                     <ul class="nav navbar-nav navbar-nav-first">
-                         <li><a href="homepage.php#home" class="smoothScroll">Home</a></li>
-                         <li><a href="gitaren.php" class="smoothScroll">Shop</a></li>
+                         <li><a href="overzicht.php" class="smoothScroll">Overzicht van bestellingen</a></li>
                     </ul>
 
                     <!-- UITLOGGEN -->
@@ -223,12 +218,12 @@ GSM:
                         if(!$stmt->execute()){
                             echo 'Het uitvoeren van de query is mislukt: '.$stmt->error.' in query: '.$sql;
                         }
-                        else{
-                            $stmt->bind_result($klantnr, $klantnaam, $klantfamilienaam, $klantemail, $klantgsm, $klantpaswoord, $postid);
-                            while($stmt->fetch()){
-                                echo '<br><br><table border="2" width=100%>
-                            <tr><th>Klantnummer</th><th>Naam</th><th>Familienaam</th><th>Email</th><th>GSM</th><th>Paswoord</th><th>Postcode</th><th>Wijzigen</th></tr>
-                            <tr><td>'.$klantnr.'</td><td>'.$klantnaam.'</td><td>'.$klantfamilienaam.'</td><td>'.$klantemail.'</td><td>'.$klantgsm.'</td><td>'.$klantpaswoord.'</td><td>'.$postid.'</td><td><a href="wijzigk.php">Wijzig</a></tr>
+                         else{
+                                $stmt->bind_result($klantnr, $klantnaam, $klantfamilienaam, $klantemail, $klantgsm, $klantpaswoord, $postid, $klantstraat, $klanthuisnummer);
+                                while($stmt->fetch()){
+                                    echo '<br><br><table border="2" width=100%>
+                            <tr><th>Klantnummer</th><th>Naam</th><th>Familienaam</th><th>Email</th><th>GSM</th><th>Paswoord</th><th>Postcode</th><th>Straat</th><th>huisnummer</th><th>Wijzigen</th></tr>
+                            <tr><td>'.$klantnr.'</td><td>'.$klantnaam.'</td><td>'.$klantfamilienaam.'</td><td>'.$klantemail.'</td><td>'.$klantgsm.'</td><td>'.$klantpaswoord.'</td><td>'.$postid.'</td><td>'.$klantstraat.'</td><td>'.$klanthuisnummer.'<td><a href="wijzigk.php">Wijzig</a></tr>
                             </table>';
                             $_SESSION["id"] = $klantnr;
                             }
@@ -254,12 +249,12 @@ GSM:
                             if(!$stmt->execute()){
                                 echo 'Het uitvoeren van de query is mislukt: '.$stmt->error.' in query: '.$sql;
                             }
-                            else{
-                                $stmt->bind_result($klantnr, $klantnaam, $klantfamilienaam, $klantemail, $klantgsm, $klantpaswoord, $postid);
+                             else{
+                                $stmt->bind_result($klantnr, $klantnaam, $klantfamilienaam, $klantemail, $klantgsm, $klantpaswoord, $postid, $klantstraat, $klanthuisnummer);
                                 while($stmt->fetch()){
-                                    echo '<br><br><table border="2" width=100%>
-                            <tr><th>Klantnummer</th><th>Naam</th><th>Familienaam</th><th>Email</th><th>GSM</th><th>Paswoord</th><th>Postcode</th><th>Wijzigen</th></tr>
-                            <tr><td>'.$klantnr.'</td><td>'.$klantnaam.'</td><td>'.$klantfamilienaam.'</td><td>'.$klantemail.'</td><td>'.$klantgsm.'</td><td>'.$klantpaswoord.'</td><td>'.$postid.'</td><td><a href="wijzigk.php">Wijzig</a></tr>
+                                   echo '<br><br><table border="2" width=100%>
+                            <tr><th>Klantnummer</th><th>Naam</th><th>Familienaam</th><th>Email</th><th>GSM</th><th>Paswoord</th><th>Postcode</th><th>Straat</th><th>huisnummer</th><th>Wijzigen</th></tr>
+                            <tr><td>'.$klantnr.'</td><td>'.$klantnaam.'</td><td>'.$klantfamilienaam.'</td><td>'.$klantemail.'</td><td>'.$klantgsm.'</td><td>'.$klantpaswoord.'</td><td>'.$postid.'</td><td>'.$klantstraat.'</td><td>'.$klanthuisnummer.'<td><a href="wijzigk.php">Wijzig</a></tr>
                             </table>';
                             $_SESSION["id"] = $klantnr;
                                 }
@@ -285,12 +280,12 @@ GSM:
                             if(!$stmt->execute()){
                                 echo 'Het uitvoeren van de query is mislukt: '.$stmt->error.' in query: '.$sql;
                             }
-                            else{
-                                $stmt->bind_result($klantnr, $klantnaam, $klantfamilienaam, $klantemail, $klantgsm, $klantpaswoord, $postid);
+                             else{
+                                $stmt->bind_result($klantnr, $klantnaam, $klantfamilienaam, $klantemail, $klantgsm, $klantpaswoord, $postid, $klantstraat, $klanthuisnummer);
                                 while($stmt->fetch()){
                                     echo '<br><br><table border="2" width=100%>
-                            <tr><th>Klantnummer</th><th>Naam</th><th>Familienaam</th><th>Email</th><th>GSM</th><th>Paswoord</th><th>Postcode</th><th>Wijzigen</th></tr>
-                            <tr><td>'.$klantnr.'</td><td>'.$klantnaam.'</td><td>'.$klantfamilienaam.'</td><td>'.$klantemail.'</td><td>'.$klantgsm.'</td><td>'.$klantpaswoord.'</td><td>'.$postid.'</td><td><a href="wijzigk.php">Wijzig</a></tr>
+                            <tr><th>Klantnummer</th><th>Naam</th><th>Familienaam</th><th>Email</th><th>GSM</th><th>Paswoord</th><th>Postcode</th><th>Straat</th><th>huisnummer</th><th>Wijzigen</th></tr>
+                            <tr><td>'.$klantnr.'</td><td>'.$klantnaam.'</td><td>'.$klantfamilienaam.'</td><td>'.$klantemail.'</td><td>'.$klantgsm.'</td><td>'.$klantpaswoord.'</td><td>'.$postid.'</td><td>'.$klantstraat.'</td><td>'.$klanthuisnummer.'<td><a href="wijzigk.php">Wijzig</a></tr>
                             </table>';
                             $_SESSION["id"] = $klantnr;
                                 }
@@ -317,11 +312,11 @@ GSM:
                                 echo 'Het uitvoeren van de query is mislukt: '.$stmt->error.' in query: '.$sql;
                             }
                             else{
-                                $stmt->bind_result($klantnr, $klantnaam, $klantfamilienaam, $klantemail, $klantgsm, $klantpaswoord, $postid);
+                                $stmt->bind_result($klantnr, $klantnaam, $klantfamilienaam, $klantemail, $klantgsm, $klantpaswoord, $postid, $klantstraat, $klanthuisnummer);
                                 while($stmt->fetch()){
                                     echo '<br><br><table border="2" width=100%>
-                            <tr><th>Klantnummer</th><th>Naam</th><th>Familienaam</th><th>Email</th><th>GSM</th><th>Paswoord</th><th>Postcode</th><th>Wijzigen</th></tr>
-                            <tr><td>'.$klantnr.'</td><td>'.$klantnaam.'</td><td>'.$klantfamilienaam.'</td><td>'.$klantemail.'</td><td>'.$klantgsm.'</td><td>'.$klantpaswoord.'</td><td>'.$postid.'</td><td><a href="wijzigk.php">Wijzig</a></tr>
+                            <tr><th>Klantnummer</th><th>Naam</th><th>Familienaam</th><th>Email</th><th>GSM</th><th>Paswoord</th><th>Postcode</th><th>Straat</th><th>huisnummer</th><th>Wijzigen</th></tr>
+                            <tr><td>'.$klantnr.'</td><td>'.$klantnaam.'</td><td>'.$klantfamilienaam.'</td><td>'.$klantemail.'</td><td>'.$klantgsm.'</td><td>'.$klantpaswoord.'</td><td>'.$postid.'</td><td>'.$klantstraat.'</td><td>'.$klanthuisnummer.'<td><a href="wijzigk.php">Wijzig</a></tr>
                             </table>';
                             $_SESSION["id"] = $klantnr;
                                 }
@@ -347,12 +342,13 @@ GSM:
                             if(!$stmt->execute()){
                                 echo 'Het uitvoeren van de query is mislukt: '.$stmt->error.' in query: '.$sql;
                             }
-                            else{
-                                $stmt->bind_result($klantnr, $klantnaam, $klantfamilienaam, $klantemail, $klantgsm, $klantpaswoord, $postid);
+                             else{
+                                $stmt->bind_result($klantnr, $klantnaam, $klantfamilienaam, $klantemail, $klantgsm, $klantpaswoord, $postid, $klantstraat, $klanthuisnummer);
+                                 
                                 while($stmt->fetch()){
                                     echo '<br><br><table border="2" width=100%>
-                            <tr><th>Klantnummer</th><th>Naam</th><th>Familienaam</th><th>Email</th><th>GSM</th><th>Paswoord</th><th>Postcode</th><th>Wijzigen</th></tr>
-                            <tr><td>'.$klantnr.'</td><td>'.$klantnaam.'</td><td>'.$klantfamilienaam.'</td><td>'.$klantemail.'</td><td>'.$klantgsm.'</td><td>'.$klantpaswoord.'</td><td>'.$postid.'</td><td><a href="wijzigk.php">Wijzig</a></tr>
+                            <tr><th>Klantnummer</th><th>Naam</th><th>Familienaam</th><th>Email</th><th>GSM</th><th>Paswoord</th><th>Postcode</th><th>Straat</th><th>huisnummer</th><th>Wijzigen</th></tr>
+                            <tr><td>'.$klantnr.'</td><td>'.$klantnaam.'</td><td>'.$klantfamilienaam.'</td><td>'.$klantemail.'</td><td>'.$klantgsm.'</td><td>'.$klantpaswoord.'</td><td>'.$post.'</td><td>'.$klantstraat.'</td><td>'.$klanthuisnummer.'<td><a href="wijzigk.php">Wijzig</a></tr>
                             </table>';
                             $_SESSION["id"] = $klantnr;
                                 }
@@ -364,11 +360,18 @@ GSM:
                         }
                     }
                 }
-        }
-                        
+        }                      
 ?>
                        
 
+                       
+                       
+                       
+                       
+                       
+                       
+                       
+                       
 <?php
         if(isset($_POST["verzenden2"])){
             if(isset($_POST["id"]) && $_POST["id"] != ""){
@@ -381,9 +384,9 @@ GSM:
                     $sql = 'select ProductId, ProductNaam, ProductOmschrijving, ProductPrijs from tblProducten where ProductId LIKE ?';
                     if($stmt = $mysqli->prepare($sql)){
                         $stmt->bind_param("i",$nr);
-                        $nr = "%".$id."%";
+                        $nr = $id."%";
                         if(!$stmt->execute()){
-                            echo 'Het uitvoeren van de query is mislukt: '.$stmt->error.' in query: '.$sql;
+                            // echo 'Het uitvoeren van de query is mislukt: '.$stmt->error.' in query: '.$sql;
                         }
                         else{
                             $stmt->bind_result($productnr, $productnaam, $productomschrijving, $productprijs);
@@ -412,9 +415,9 @@ GSM:
                     $sql = "select ProductId, ProductNaam, ProductOmschrijving, ProductPrijs from tblProducten where ProductNaam LIKE ?";
                     if($stmt = $mysqli->prepare($sql)){
                         $stmt->bind_param("s",$nm);
-                        $nm = "%".$naam."%";
+                        $nm = $naam."%";
                         if(!$stmt->execute()){
-                            echo 'Het uitvoeren van de query is mislukt: '.$stmt->error.' in query: '.$sql;
+                            // echo 'Het uitvoeren van de query is mislukt: '.$stmt->error.' in query: '.$sql;
                         }
                         else{
                             $stmt->bind_result($productnr, $productnaam, $productomschrijving, $productprijs);
@@ -452,7 +455,7 @@ GSM:
                     <div class="col-md-5 col-sm-12">
                          <div class="footer-thumb footer-info"> 
                               <h2>GuitarWorld</h2>
-                              <p>Een wereld vol gitaren en accessiores voor iedereen.</p>
+                              <p>Een wereld vol gitaren voor iedereen.</p>
                          </div>
                     </div>
 
@@ -477,65 +480,6 @@ GSM:
                </div>
           </div>
      </footer>
-
-     <!-- MODAL -->
-     <section class="modal fade" id="modal-form" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-          <div class="modal-dialog modal-lg">
-               <div class="modal-content modal-popup">
-
-                    <div class="modal-header">
-                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                              <span aria-hidden="true">&times;</span>
-                         </button>
-                    </div>
-
-                    <div class="modal-body">
-                         <div class="container-fluid">
-                              <div class="row">
-
-                                   <div class="col-md-12 col-sm-12">
-                                        <div class="modal-title">
-                                             <h2>GuitarWorld</h2>
-                                        </div>
-
-                                        <!-- NAV TABS -->
-                                        <ul class="nav nav-tabs" role="tablist">
-                                             <li class="active"><a href="#sign_up" aria-controls="sign_up" role="tab" data-toggle="tab">Maak een account</a></li>
-                                             <li><a href="#sign_in" aria-controls="sign_in" role="tab" data-toggle="tab">Inloggen</a></li>
-                                        </ul>
-
-                                        <!-- TAB PANES -->
-                                        <div class="tab-content">
-                                             <div role="tabpanel" class="tab-pane fade in active" id="sign_up">
-                                                  <form action="#" method="post">
-                                                       <input type="text" class="form-control" name="naam" placeholder="Naam*" required>
-                                                       <input type="text" class="form-control" name="familienaam" placeholder="Familienaam*" required>
-                                                       <input type="email" class="form-control" name="email" placeholder="Email*" required>
-                                                       <input type="tel" class="form-control" name="gsm" placeholder="GSM">
-                                                       <input type="password" class="form-control" name="paswoord" placeholder="Paswoord*" required>
-                                                       <input type="submit" class="form-control" name="submit" value="Inloggen">
-                                                      <p>*Verplicht in te vullen</p>
-                                                  </form>
-                                             </div>
-
-                                             <div role="tabpanel" class="tab-pane fade in" id="sign_in">
-                                                  <form action="#" method="post">
-                                                       <input type="email" class="form-control" name="email" placeholder="Email" required>
-                                                       <input type="password" class="form-control" name="paswoord" placeholder="Paswoord" required>
-                                                       <input type="submit" class="form-control" name="submit" value="Inloggen">
-                                                       <!-- link voor paswoord vergeten? bijplaatsen -->
-                                                  </form>
-                                             </div>
-                                        </div>
-                                   </div>
-
-                              </div>
-                         </div>
-                    </div>
-
-               </div>
-          </div>
-     </section>
 
 
      <!-- SCRIPTS -->
